@@ -1,0 +1,65 @@
+---
+title: 'Authenticating'
+description: 'How the Prometheus SDKs automatically handle authentication for protected or paid services.'
+---
+
+Many services in the App Store, especially those that require payment, are protected. To use them, your agent must be authenticated.
+
+Fortunately, this process is designed to be seamless and is handled automatically by the Model Context Protocol (MCP) client or SDK you are using.
+
+### The Seamless Authentication Flow
+
+You do not need to manually register clients, handle secrets, or exchange codes. The entire process is managed for you behind the scenes using the secure, industry-standard OAuth 2.1 protocol with PKCE and Dynamic Client Registration.
+
+Here’s what you and your users will experience when connecting to a protected service for the first time:
+
+<Steps>
+  <Step title="1. Connection is Attempted">
+    Your application or SDK attempts to connect to the protected MCP server.
+  </Step>
+  <Step title="2. Login Prompt Appears">
+    The server recognizes that you are not authenticated and automatically
+    triggers the login flow. A browser window will open, prompting the user to
+    log in and grant your application consent.
+  </Step>
+  <Step title="3. User Grants Consent">
+    The user logs in with their identity and approves the permissions requested
+    by the service (e.g., "Allow this agent to spend tokens on my behalf").
+  </Step>
+  <Step title="4. Connection Succeeds">
+    Once consent is granted, the browser window closes. The SDK securely
+    receives an access token in the background and automatically retries the
+    connection, which now succeeds.
+  </Step>
+</Steps>
+
+All subsequent calls to the service's tools will be automatically authenticated. The SDK manages the token lifecycle (including refreshing expired tokens) for you.
+
+### For Users of Existing MCP Clients
+
+If you are using an application like **Cursor, Claude, or VS Code**, this entire flow will happen automatically the first time you try to use a protected tool. Simply follow the on-screen instructions in the browser window that appears.
+
+### For Developers Using the SDK
+
+If you are building a custom client with the `@modelcontextprotocol/sdk`, the magic happens when you call `client.connect()`.
+
+```typescript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+
+// The URL of the protected service from the App Store
+const serviceUrl = 'https://<canister_id>.icp0.io/mcp/';
+
+const client = new Client({ name: 'my-custom-agent', version: '1.0.0' });
+const transport = new StreamableHTTPClientTransport(new URL(serviceUrl));
+
+// This single call handles everything.
+// If authentication is needed, it will trigger the browser flow.
+await client.connect(transport);
+
+// You are now connected and authenticated.
+// All subsequent calls are automatically handled by the SDK.
+const result = await client.callTool({ name: 'some_paid_tool' });
+```
+
+When you call `client.connect()` on a protected service, the SDK automatically detects the need for authentication and triggers the browser-based flow. After the user grants consent, the SDK securely stores the tokens and includes them in all future requests. **You do not need to manage tokens manually.**

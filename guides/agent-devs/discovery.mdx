@@ -1,0 +1,46 @@
+---
+title: 'Discovery'
+description: 'How to use the Prometheus App Store to find trusted services and evaluate their on-chain certificate of quality.'
+---
+
+The Prometheus App Store is your central hub for discovering services to integrate with your AI agent. But it's more than just a search engine; it's a transparent, on-chain registry that allows you to verify the security and quality of any service before you use it.
+
+### From Discovery to Certificate
+
+After browsing the **[App Store](https://prometheusprotocol.org/audit)** and clicking on a service, you'll land on its App Info page. The most important feature here is the **Prometheus Certificate**, which you can access by clicking the "view certificate" link under the verification badge.
+
+This certificate is the immutable, on-chain proof of the service's quality and security.
+
+### Anatomy of a Prometheus Certificate
+
+The certificate page provides a detailed breakdown of the service's audit results. Let's break down what you're seeing.
+
+<Frame>
+  <img src="/images/prometheus-certificate-page.png" />
+  <figcaption>
+    An example of a "Gold Verified" Prometheus Certificate.
+  </figcaption>
+</Frame>
+
+When evaluating a certificate, focus on these key areas:
+
+1.  **Verification Tier & Overall Score:**
+    - The **"Gold Verified"** badge is the highest tier, indicating the service passed rigorous, independent security audits with an outstanding score.
+    - The **Overall Score** (e.g., 95/100) is a quick, at-a-glance summary of the audit results.
+
+2.  **Category Scores:**
+    The overall score is a composite of several categories, including:
+    - **Build (92/100):** This score evaluates the quality, reproducibility, and best practices of the service's source code and build process.
+    - **Security (98/100):** This score reflects the service's resilience against common vulnerabilities and attack vectors, as determined by the auditors.
+
+3.  **Cryptographic Provenance:**
+    This is the core of the on-chain trust. It provides a verifiable link between the source code, the compiled code, and the running service.
+    - **Wasm Hash:** The unique cryptographic fingerprint of the compiled code that was audited and deployed.
+    - **Git Commit:** The specific commit hash from the source code repository that corresponds to the deployed Wasm. You can click **"View Commit on GitHub"** to inspect the exact source code that was audited.
+    - **Canister ID:** The on-chain address of the live, running service.
+
+A strong Prometheus Certificate, with high scores and complete provenance data, is your guarantee that the service you're about to use is exactly what it claims to be.
+
+---
+
+After you've discovered a service and verified its trustworthiness, the next step is to connect to it. If the service requires payment or authentication, you'll need to handle the OAuth flow.

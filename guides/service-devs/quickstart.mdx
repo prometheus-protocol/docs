@@ -1,0 +1,93 @@
+---
+title: 'Quick Start'
+description: 'Go from a new project to a running local MCP server in minutes.'
+---
+
+This guide will walk you through the fastest way to get your new MCP server running on your local machine. By the end, you'll have a deployed, testable service.
+
+We assume you have already created a project using `create-motoko-mcp-server`.
+
+### Prerequisites
+
+Before you begin, make sure you have the following tools installed on your system:
+
+- **DFX:** The DFINITY Canister SDK. [Installation Guide](https://internetcomputer.org/docs/current/developer-docs/setup/install/).
+- **Node.js:** Version 18.0 or higher. [Download](https://nodejs.org/).
+- **MOPS:** The Motoko Package Manager. [Installation Guide](https://mops.one/docs/install).
+
+<Steps>
+<Step>
+### Step 1: Install Dependencies
+
+First, you need to install the project's dependencies. The template uses both Node.js for scripting and MOPS for Motoko packages.
+
+Run the following commands from your project's root directory:
+
+```bash
+# Install Node.js dependencies
+npm install
+
+# Install Motoko dependencies
+npm run mops:install
+```
+
+</Step>
+
+<Step>
+### Step 2: Deploy Your Server
+
+Next, you'll deploy the server to a local, simulated version of the blockchain network.
+
+1.  **Start the Local Replica:**
+    This command starts the local development network in the background.
+
+    ```bash
+    npm run start
+    ```
+
+2.  **Deploy to the Local Replica:**
+    This command compiles your Motoko code and deploys it to the local network.
+
+        <Info>
+          You must run this command in a **new terminal window**, as the local
+          replica will be running in your current one.
+        </Info>
+
+        ```bash
+        npm run deploy
+        ```
+
+            After a moment, the CLI will output the canister ID of your deployed server. Keep this ID handy for the next step.
+
+</Step>
+
+<Step>
+### Step 3: Test with the MCP Inspector
+
+The MCP Inspector is a web-based tool for interacting with your server's tools.
+
+1.  **Launch the Inspector:**
+    This command starts the Inspector web app.
+
+    ```bash
+    npm run inspector
+    ```
+
+2.  **Connect to Your Server:**
+    The Inspector needs the URL of your local server. Construct the URL using the canister ID from the `deploy` step.
+
+    ```
+    # Replace `your_canister_id` with the actual ID from the deploy output
+    http://127.0.0.1:4943/mcp/?canisterId=your_canister_id
+    ```
+
+    Paste this URL into the Inspector's connection bar. You can now see and call the default `get_weather` tool.
+
+</Step>
+</Steps>
+
+---
+
+🎉 **Congratulations!** You have a working MCP server running locally.
+
+In the next section, you'll learn how to enable monetization by adding authentication and connecting to the payments system.

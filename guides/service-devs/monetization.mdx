@@ -1,0 +1,118 @@
+---
+title: 'Monetization'
+description: 'Learn how to add paid tools by integrating the Prometheus identity and payment pillars.'
+---
+
+A basic MCP server is useful, but a monetized one can become a self-sustaining business. This guide will show you how to activate the pre-built monetization features in your project template.
+
+Enabling monetization is a two-part process:
+
+1.  **Activating Authentication:** Protecting your tools so only authorized users can call them.
+2.  **Registering Your Service:** Connecting your server to the Prometheus Identity provider so it can issue tokens.
+
+### Step 1: Activate Monetization
+
+Your project template contains all the necessary code for monetization, but it's commented out by default. In this step, you'll activate it.
+
+Open the `src/main.mo` file in your editor. You will need to uncomment three sections of code.
+
+<Steps>
+
+<Step title="Update the Tools to Require Payment">
+    Find the `tools` array and uncomment the `payment` block inside the `get_weather` tool definition. This tells the MCP SDK that calling this tool requires a valid payment.
+
+    ```ts src/main.mo
+    let tools : [MCP.Tool] = [
+      // ...
+      {
+        // ...
+        payment = ?{
+          amount = 100_000; // The cost to call this tool
+          ledger = Ledger.ICRC1(icrc1Ledger); // The token ledger to use
+        };
+      },
+      // ...
+    ];
+    ```
+
+</Step>
+<Step title="Configure the Allowance Management URL">
+
+    Uncomment the `allowanceUrl` in the `mcpConfig`. This URL is returned to clients and AI agents, directing users to the web dashboard where they can manage their token allowances for your service.
+
+    ```ts src/main.mo
+    let mcpConfig : MCP.Config = {
+      // ...
+      allowanceUrl = ?"https://bmfnl-jqaaa-aaaai-q32ha-cai.icp0.io";
+    };
+    ```
+
+</Step>
+<Step title="Initialize the Authentication Context">
+
+    Finally, find and uncomment the large block of code that initializes the `authContext`. This is the core logic that integrates your server with the Prometheus OAuth provider, enabling it to validate access tokens on incoming requests.
+
+    ```ts src/main.mo
+    // URL of the Prometheus OAuth 2.1 provider
+    let issuerUrl = "https://bfggx-7yaaa-aaaai-q32gq-cai.icp0.io";
+
+    // URL of the allowance management dashboard (OAuth provider frontend)
+    let allowanceUrl = "https://bmfnl-jqaaa-aaaai-q32ha-cai.icp0.io";
+
+    // The scopes your service requires. "openid" is always required.
+    let requiredScopes = ["openid"];
+
+    // Function to transform the response for jwks client
+    public query func transformJwksResponse({
+      context : Blob;
+      response : IC.HttpRequestResult;
+    }) : async IC.HttpRequestResult {
+      {
+        response with headers = []; // not interested in the headers
+      };
+    };
+
+    // Initialize the auth context with the issuer URL and required scopes.
+    transient let authContext : ?AuthTypes.AuthContext = ?AuthState.init(
+      Principal.fromActor(self),
+      issuerUrl,
+      requiredScopes,
+      transformJwksResponse,
+    );
+    ```
+
+</Step>
+</Steps>
+
+### Step 2: Deploy the Updated Server
+
+Now that the code is activated, save the `src/main.mo` file and deploy the new logic to your local replica.
+
+```bash
+npm run deploy
+```
+
+Your server's tools are now protected. If you try to call them from the MCP Inspector, the calls will fail because they are missing a valid authentication token.
+
+### Step 3: Register with Auth Server
+
+The final step is to register your running server as a valid client with the central Prometheus Auth Server. This allows the auth server to issue tokens that your service will accept.
+
+Your project includes a built-in script to handle this. Run the following command:
+
+```bash
+npm run auth register
+```
+
+This command will interactively guide you through the registration process.
+
+<Info>
+  The `auth` script has several commands. You can see all available options by
+  running `npm run auth -- --help`.
+</Info>
+
+---
+
+Your server is now a fully monetized service, capable of authenticating users and requiring payments for its tools.
+
+Next, you'll learn how to submit your completed server to the Prometheus App Store to get it verified and discovered by the community.

@@ -1,0 +1,31 @@
+---
+title: 'Finding Audits'
+description: 'How to use the Audit Hub to find and select services to audit.'
+---
+
+The Audit Hub is your central marketplace for work within the Prometheus ecosystem. It's a real-time, on-chain queue of all services that have been submitted by developers and are awaiting verification.
+
+### Anatomy of an Audit Listing
+
+Each item in the Audit Hub queue provides all the information you need to decide if you want to take on the job.
+
+<Frame>
+  <img src="/public/audit-hub-ui.png" />
+  <figcaption>The Audit Hub, showing a list of pending audits.</figcaption>
+</Frame>
+
+Here’s a breakdown of what you'll see for each service:
+
+- **Server Name:** The name of the service awaiting audit.
+- **Audit Type:** The specific skill required for the audit. This corresponds to a specific Reputation Token (e.g., `security_v1`).
+- **Reward:** The amount of reward tokens (e.g., preMCPT) you will earn for successfully completing the audit.
+- **Required Stake:** The amount and type of Reputation Tokens you must stake to claim this audit (e.g., "Stake: 10,000 security_v1 Tokens").
+- **Status:** The current state of the audit.
+  - **Open:** The audit is available for any qualified auditor to claim.
+  - **Claimed by [Principal]:** The audit has been reserved by another auditor.
+
+You can browse this list to find work that matches your specific credentials and reward expectations.
+
+---
+
+Once you've found an audit you want to perform, the next step is to claim it by staking your reputation.

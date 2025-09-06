@@ -1,0 +1,58 @@
+---
+title: 'System Architecture'
+description: 'A high-level overview of the components and services that make up the Prometheus Protocol.'
+---
+
+The Prometheus Protocol is a vertically integrated stack where each layer builds upon the last, ensuring a secure and seamless flow from code submission to end-user interaction. This page provides a high-level overview of the core components and how they interact.
+
+![Protocol Architecture](/images/protocol-architecture.png)
+
+### Core Components
+
+The protocol is composed of several key on-chain services working in concert to provide the pillars of identity, trust, and payments.
+
+<CardGroup cols={1}>
+  <Card title="The Identity Provider" icon="key">
+    An on-chain OAuth 2.1 server that **services in the App Store** can use to
+    authenticate their end-users and AI agents.
+  </Card>
+  <Card title="The App Store & Trust Hub" icon="store">
+    The core of the trust layer. It manages the versioned registry, the audit
+    and bounty lifecycle, and on-chain attestations.
+  </Card>
+  <Card title="The Secure Deployer" icon="rocket">
+    The deployment engine. It ensures that only DAO-verified code can be
+    deployed, enforcing the integrity of the software supply chain.
+  </Card>
+</CardGroup>
+
+---
+
+### Identity & Interaction Model
+
+A critical concept in the Prometheus architecture is the distinction between two types of identity:
+
+1.  **Protocol Participant Identity:** The identities of developers, auditors, and DAO members who build and govern the ecosystem.
+2.  **End-User & Agent Identity:** The identities of the final consumers who interact with the services listed in the App Store.
+
+#### 1. Protocol Participants (The "Supply Side")
+
+Developers, auditors, and DAO members interact directly with the protocol's core services to perform governance and supply-chain functions.
+
+- **Actions:** Submitting code, creating bounties, submitting attestations, and voting.
+- **Identity:** These actions are authorized using the blockchain's native identity system (principals). Participants typically manage their identity using tools like the **Prometheus CLI**, which leverages this native identity for secure, on-chain operations.
+
+This ensures that every critical action affecting the software supply chain is cryptographically signed and attributable to a specific on-chain identity.
+
+#### 2. End-Users & Agents (The "Demand Side")
+
+When an end-user or an AI agent wants to use a service from the App Store, they need a more user-friendly and standards-based way to authenticate. This is the role of the **Identity Provider**.
+
+- **Actions:** Logging into a service, authorizing an agent, granting payment allowances.
+- **Identity:** The protocol's on-chain **OAuth 2.1 server** provides this functionality. Service developers can integrate this provider to give their users a familiar, secure login experience and to enable programmatic, permissioned access for AI agents.
+
+This creates a clear separation: native on-chain identity governs the protocol, while the standards-based OAuth provider secures the services running on top of it.
+
+This diagram shows a more detailed view of how the core services communicate with each other:
+
+![Component Interaction Diagram](/images/canister-architecture.png)

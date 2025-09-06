@@ -1,0 +1,92 @@
+---
+title: 'Publishing'
+description: 'Submit your service for a decentralized audit and get listed in the Prometheus App Store.'
+---
+
+Once your service is built, tested, and monetized, the final step is to make it discoverable and signal its quality to the world. The Prometheus App Store is the central hub where users and AI agents find trusted, community-vetted services.
+
+This guide will walk you through using the `app-store` CLI to get your service verified and published.
+
+### The Verification Process
+
+Publishing is more than just adding your service to a list. It's a formal, on-chain process that involves three distinct phases:
+
+1.  **Submission:** You submit your service's code and metadata to the protocol. This creates a public audit bounty.
+2.  **Audit & Verification:** Independent auditors review your service. If it passes, the DAO provides the final on-chain verification.
+3.  **Publication:** Once verified, you can publish the specific version, making it visible and marked as trusted in the App Store.
+
+### Step 1: Deploy to the Main Network
+
+Before you can submit your service for a mainnet audit, you must deploy it to the main network.
+
+<Steps>
+
+<Step title="Deploy Your Service to Mainnet">
+
+```bash
+npm run deploy:ic
+```
+
+This command will deploy your service to the live network and provide you with a mainnet canister ID.
+
+</Step>
+
+<Step title="Update Your OAuth Client">
+
+<Warning>
+  This is a critical step. Your OAuth client is still configured for your local
+  environment. You must update it with your new mainnet URL.
+</Warning>
+**Construct Your Mainnet URL:** Use your mainnet canister ID to create the URL
+for your service.
+
+    ```
+    # Replace `your_mainnet_canister_id` with the actual ID from the deploy output
+    https://your_mainnet_canister_id.icp0.io
+    ```
+
+</Step>
+</Steps>
+
+### Step 2: Initialize the App Store Configuration
+
+The `app-store` CLI needs a configuration file to know what to submit.
+
+```bash
+npm run app-store init
+```
+
+This command creates a `prometheus.yml` file in your project root. Open this file and fill in the details about your service, such as its name, description, and the mainnet canister ID from the previous step.
+
+### Step 3: Submit for Verification
+
+Now, submit your service to the protocol. This action reads your `prometheus.yml`, records your service's code hash on-chain, and officially opens it up for auditing.
+
+```bash
+npm run app-store submit
+```
+
+### Step 4: Monitor the Verification Status
+
+The audit and DAO verification process is performed by other members of the ecosystem and can take time. You can check the status of your submission at any point using the `status` command.
+
+```bash
+npm run app-store status
+```
+
+You must wait until the status is `Verified` before proceeding to the final step.
+
+### Step 5: Publish the Verified Version
+
+Once your service has been successfully verified by the auditors and the DAO, you have the green light to publish it. This final command makes the verified version visible in the App Store, complete with its **Prometheus Certificate**.
+
+```bash
+# You can add a version number for your release
+npm run app-store -- publish --app-version "1.0.0"
+```
+
+---
+
+🎉 **Congratulations!** Your service is now a trusted, verified, and discoverable part of the Prometheus ecosystem.
+
+The final page in this guide covers the day-to-day management of your live server, such as handling your treasury.

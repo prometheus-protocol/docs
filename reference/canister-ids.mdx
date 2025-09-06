@@ -1,0 +1,38 @@
+---
+title: 'Canister IDs'
+description: 'A comprehensive list of official canister IDs for the core Prometheus Protocol services on the main network.'
+---
+
+This page provides the official mainnet canister IDs for the core services of the Prometheus Protocol. Use these principals when interacting with the protocol directly or configuring your services and clients.
+
+### Core Protocol Services
+
+These are the primary backend canisters that orchestrate the protocol's logic.
+
+| Service Name           | Description                                                                                            | Canister ID (Principal)       |
+| :--------------------- | :----------------------------------------------------------------------------------------------------- | :---------------------------- |
+| **MCP Registry**       | The central on-chain registry for applications, WASM versions, and verification status (ICRC-118/126). | `grhdx-gqaaa-aaaai-q32va-cai` |
+| **MCP Orchestrator**   | The secure deployer that manages canister deployments, ensuring only verified WASM is used (ICRC-120). | `ez54s-uqaaa-aaaai-q32za-cai` |
+| **Auth Server**        | The on-chain OAuth 2.1 provider for user and agent authentication.                                     | `bfggx-7yaaa-aaaai-q32gq-cai` |
+| **Audit Hub**          | The backend service for the bounty and attestation system (ICRC-127).                                  | `eq6xo-cyaaa-aaaai-q32yq-cai` |
+| **Usage Tracker**      | The "Beacon" service that collects Proof of Usage metrics for the rewards program.                     | `m63pw-fqaaa-aaaai-q33pa-cai` |
+| **Example MCP Server** | A reference implementation of a basic MCP server deployed on the mainnet.                              | `jcavt-oyaaa-aaaai-q33qq-cai` |
+
+### User-Facing Frontends
+
+These are the web application canisters that provide user interfaces for the protocol.
+
+| Service Name     | Description                                                                    | Canister ID (Principal)       |
+| :--------------- | :----------------------------------------------------------------------------- | :---------------------------- |
+| **App Store UI** | The primary user interface for browsing and discovering verified services.     | `jfbth-daaaa-aaaai-q33qa-cai` |
+| **Auth UI**      | The frontend for the login, consent, and token allowance management dashboard. | `bmfnl-jqaaa-aaaai-q32ha-cai` |
+
+### Token Ledgers
+
+These are the ICRC-1 compliant ledger canisters for the protocol's tokens.
+
+| Service Name         | Description                                                                   | Canister ID (Principal)       |
+| :------------------- | :---------------------------------------------------------------------------- | :---------------------------- |
+| **PMP Token Ledger** | The test Prometheus Protocol (PMP) token ledger for testing paid MCP servers. | `dy3i7-mqaaa-aaaai-q32ja-cai` |
+| **preMCPT Ledger**   | The ledger for the pre-launch `preMCPT` reward token.                         | `mz2jc-iiaaa-aaaai-q33pq-cai` |
+| **ICP Ledger**       | The official Internet Computer (ICP) token ledger.                            | `ryjl3-tyaaa-aaaaa-aaaba-cai` |

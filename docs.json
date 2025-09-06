@@ -1,127 +1,116 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "almond",
+  "name": "Prometheus Protocol",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#c2a23d",
+    "light": "#c2a23d",
+    "dark": "#c2a23d"
   },
-  "favicon": "/favicon.svg",
+  "background": {
+    "color": {
+      "light": "#fff",
+      "dark": "#1b131b"
+    }
+  },
+  "logo": {
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
+  },
+  "favicon": "/favicon.ico",
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Guides",
-        "groups": [
+        "group": "Prometheus Protocol",
+        "pages": ["index", "core-concepts", "architecture"]
+      },
+      {
+        "group": "Guides",
+        "pages": [
           {
-            "group": "Getting started",
+            "group": "For Service Developers",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "guides/service-devs/overview",
+              "guides/service-devs/quickstart",
+              "guides/service-devs/monetization",
+              "guides/service-devs/publishing",
+              "guides/service-devs/managing"
             ]
           },
           {
-            "group": "Customization",
+            "group": "For AI Agent Developers",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "guides/agent-devs/overview",
+              "guides/agent-devs/discovery",
+              "guides/agent-devs/authenticating",
+              "guides/agent-devs/payments"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "For Service Auditors",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "guides/auditors/overview",
+              "guides/auditors/finding-audits",
+              "guides/auditors/performing-audits",
+              "guides/auditors/managing-your-profile"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          }
+        "group": "Reference",
+        "pages": [
+          "reference/cli-commands",
+          "reference/sdk-libraries",
+          "reference/icrc-standards",
+          "reference/canister-ids"
         ]
       }
     ],
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "App Store",
+          "href": "https://prometheusprotocol.org",
+          "icon": "play"
         },
         {
           "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "href": "https://discord.gg/gRehbTFZZ2",
+          "icon": "discord"
         }
       ]
     }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@prometheusprotocol.org"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Start Now",
+      "href": "https://prometheusprotocol.org"
     }
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
       "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/mintlify"
     }
   }
 }

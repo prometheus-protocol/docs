@@ -1,0 +1,42 @@
+---
+title: 'Payments'
+description: 'Understand the user-controlled token allowance system for using paid tools.'
+---
+
+Many services in the App Store are monetized. The Prometheus Protocol handles this through a secure and user-friendly **token allowance system**. As an agent developer or user, it's important to understand this flow.
+
+The core principle is that **the user is always in control**. A service can never take funds without explicit permission. This permission is granted by the user in the form of an "allowance"—a specific amount of a token that a specific service is allowed to withdraw over time.
+
+### The Proactive Approach: Allocation During Login
+
+The easiest way to handle payments is during the initial authentication flow.
+
+When a user connects to a _paid_ service for the first time, the OAuth consent screen will include an extra, optional step for payment allocation.
+
+<Steps>
+  <Step title="See the Allocation Prompt">
+    After the standard login and consent, the user will be prompted to set an
+    allowance for the service.
+  </Step>
+  <Step title="Select a Token">
+    A dropdown will show the token(s) the service accepts.
+  </Step>
+  <Step title="Set an Allowance">
+    The user enters an amount, setting the maximum total that the service can
+    draw from their wallet for future tool calls.
+  </Step>
+</Steps>
+
+By setting an allowance up-front, all subsequent paid tool calls will work seamlessly until the allowance is depleted.
+
+### The Reactive Approach: Handling Insufficient Funds
+
+What happens if a user skips the initial allocation, or if their allowance runs out?
+
+In this case, a call to a paid tool will fail, but it will fail gracefully. The MCP server will return a text message explaining the situation and providing a direct link to the **Prometheus Approvals Dashboard**.
+
+<Info>
+  This response will include a direct link to the **Prometheus Approvals
+  Dashboard**, a secure web application where the user can manage their
+  allowances for all services.
+</Info>

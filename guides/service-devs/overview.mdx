@@ -1,0 +1,55 @@
+---
+title: 'Overview'
+description: 'Your complete guide to building, monetizing, and verifying a service on the Prometheus Protocol.'
+---
+
+Welcome, service developer! This guide is your primary resource for building on the Prometheus Protocol. We assume you've started by scaffolding a new project with our `create-motoko-mcp-server` template.
+
+This guide will walk you through the entire lifecycle of a service: from a local "Hello, World" to a monetized, globally-available application listed in the decentralized App Store.
+
+### The Service Developer Journey
+
+The path to launching a successful, trusted service on the protocol involves these key stages. This guide is structured to walk you through each one.
+
+<Steps>
+  <Step title="1. Quick Start">
+    Deploy a basic, functional MCP server to your local environment in minutes
+    and test it with the MCP Inspector.
+  </Step>
+  <Step title="2. Enable Monetization">
+    Integrate our on-chain OAuth 2.1 provider and enable the token allowance
+    system to add paid, protected tools to your service.
+  </Step>
+  <Step title="3. Publish to the App Store">
+    Submit your service for a decentralized audit. A successful verification
+    earns you a **Prometheus Certificate**, a powerful signal of trust and
+    security.
+  </Step>
+  <Step title="4. Manage Your Server">
+    Learn how to manage your service post-launch, including withdrawing funds
+    from your treasury and enabling usage analytics.
+  </Step>
+</Steps>
+
+### Your Toolkit
+
+Your project template comes pre-configured with two essential command-line tools, accessible via `npm run` scripts. It's critical to understand their distinct roles:
+
+<CardGroup cols={2}>
+  <Card
+    title="The Auth Script (`npm run auth`)"
+    href="/guides/service-devs/enabling-monetization"
+    icon="key">
+    This tool manages your service's identity. You'll use it to register your
+    service as a client with the Prometheus OAuth provider.
+  </Card>
+  <Card
+    title="The App Store CLI (`npm run app-store`)"
+    href="/guides/service-devs/publishing-to-app-store"
+    icon="store">
+    This tool manages the trust and verification lifecycle. You'll use it to
+    submit your service for auditing and publish new versions to the App Store.
+  </Card>
+</CardGroup>
+
+Ready to get started? Let's deploy your first server.

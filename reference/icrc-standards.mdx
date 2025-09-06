@@ -1,0 +1,72 @@
+---
+title: 'ICRC Standards'
+description: "An overview of the powerful composition of ICRC standards that form the Prometheus Protocol's trustless software supply chain."
+---
+
+The Prometheus Protocol is not a single canister, but a composition of several powerful ICRC (Internet Computer Request for Comments) standards working in concert. This architecture creates a transparent, on-chain, and fully auditable lifecycle for decentralized applications.
+
+This page provides a reference for the key standards we use and the role each one plays in the system.
+
+### Core Trust & Verification Standards
+
+These standards form the backbone of the decentralized App Store and the software supply chain.
+
+<CardGroup cols={1}>
+  <Card
+    title="ICRC-118: WASM Management"
+    href="https://forum.dfinity.org/t/icrc-118-wasm-registry-definition-for-version-control-and-history/42589"
+    icon="cubes">
+    **The Shelf.** This standard manages application namespaces (`CanisterType`)
+    and their versioned WASM histories. It's the underlying storage layer for
+    all application code.
+  </Card>
+  <Card
+    title="ICRC-120: Canister Orchestration"
+    href="https://forum.dfinity.org/t/icrc-120-canister-wasm-orchestration-service/42591"
+    icon="rocket">
+    **The Canister Manager.** This standard handles the deployment and
+    orchestration of canisters. Crucially, it ensures that only WASM that has
+    been verified by the protocol can be deployed.
+  </Card>
+  <Card
+    title="ICRC-126: Verification & Auditing"
+    href="https://forum.dfinity.org/t/icrc-126-wasm-verification/42592"
+    icon="clipboard-check">
+    **The Immutable Logbook.** This standard provides the immutable ledger for
+    verification requests and the resulting audit reports ("attestations") filed
+    by security experts.
+  </Card>
+  <Card
+    title="ICRC-127: Bounty System"
+    href="https://forum.dfinity.org/t/icrc-127-generic-bounty-system/42594"
+    icon="gift">
+    **The Economic Engine.** This standard powers the decentralized bounty
+    system. It allows anyone to fund audits and enables automated, trustless
+    payouts from escrow upon successful completion.
+  </Card>
+</CardGroup>
+
+---
+
+### Token & Identity Standards
+
+These standards provide the foundation for payments, credentials, and on-chain proof of quality.
+
+<CardGroup cols={1}>
+  <Card
+    title="ICRC-1 & ICRC-2: Fungible Tokens"
+    href="https://github.com/dfinity/ICRC-1"
+    icon="dollar-sign">
+    **The Bank.** These standards are the foundation of the **Direct Payments**
+    pillar. ICRC-1 is used for all token transfers, while ICRC-2 powers the
+    user-controlled allowance system.
+  </Card>
+  <Card title="Auditor Credentials (Custom)" href="#" icon="key">
+    **The Identity Layer.** While not a formal ICRC standard, this is a critical
+    component. It issues non-transferable, credential-like tokens to vetted
+    auditors, ensuring that only qualified experts can perform specific types of
+    audits.
+  </Card>
+</CardGroup>
+
+By composing these standards, the Prometheus Protocol creates a transparent, end-to-end system for verifiable software, from code submission to secure deployment.

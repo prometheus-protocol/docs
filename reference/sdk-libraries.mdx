@@ -1,0 +1,123 @@
+---
+title: 'SDK Libraries'
+description: 'A complete reference for the official and community SDKs for building and consuming services.'
+---
+
+This page provides a comprehensive overview of the SDKs available for interacting with the Prometheus Protocol and the underlying Model Context Protocol (MCP).
+
+## For Service Developers (On-Chain)
+
+These SDKs are for developers building services on the Internet Computer that will be listed in the Prometheus App Store.
+
+### Official Motoko SDK
+
+This is the primary, feature-complete SDK for building Prometheus Protocol compliant servers in Motoko. It includes built-in support for the identity, payments, and trust pillars.
+
+- **GitHub Repository:** [prometheus-protocol/motoko-mcp-sdk](https://github.com/prometheus-protocol/motoko-sdk)
+- **Package on MOPS:** [`mcp-motoko-sdk`](https://mops.one/mcp-motoko-sdk)
+
+#### Core Concepts
+
+The SDK is declarative. You define your server's capabilities (tools, resources) and pass them to the `Mcp.createServer` function.
+
+#### Monetization & Payments
+
+The SDK has first-class support for token payments for tool invocations. You define the payment requirement on the tool itself, and the SDK handles the allowance check and token transfer before your tool logic is ever executed.
+
+```ts src/main.mo
+let tools : [Mcp.Tool] = [{
+  name = "unlock_resource";
+  // ...
+  // The tool is what carries the payment details.
+  payment = ?{
+    amount = 50_000_000; // Cost per call
+    ledger = Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"); // ICRC-1 Ledger
+  };
+}];
+```
+
+#### Treasury Management
+
+The SDK automatically exposes secure treasury functions on your canister for managing collected funds.
+
+- `get_owner()`
+- `set_owner(new_owner)`
+- `get_treasury_balance(ledger_id)`
+- `withdraw(ledger_id, amount, destination)`
+
+#### Proof of Usage (Beacon)
+
+The SDK includes a built-in "beacon" to participate in the protocol's Proof of Usage rewards program. By enabling it in your config, the SDK will automatically and securely report authenticated tool usage statistics, making your service eligible for rewards.
+
+```ts src/main.mo
+transient let beaconContext : ?Beacon.BeaconContext = ?Beacon.init(
+    Principal.fromText("m63pw-fqaaa-aaaai-q33pa-cai"), // Public beacon canister ID
+    24 * 60 * 60, // Send a beacon every 24 hours
+);
+```
+
+### Community Rust SDK
+
+For developers who prefer to build services in Rust, this community-maintained SDK provides compatibility with the Prometheus Protocol.
+
+<Card
+  title="ByteSmithLabs/ic-rmcp"
+  href="https://github.com/ByteSmithLabs/ic-rmcp/tree/main"
+  icon="code">
+  A Rust framework for building MCP servers on the Internet Computer. It is
+  compatible with the Prometheus Protocol's authentication and payment systems.
+</Card>
+
+---
+
+## For AI Agent & Client Developers (Off-Chain)
+
+These SDKs are for developers building applications that **consume** tools from services listed in the App Store. They are maintained by the core Model Context Protocol team and provide a standardized way to connect from any environment.
+
+<CardGroup cols={3}>
+  <Card
+    title="TypeScript"
+    href="https://github.com/modelcontextprotocol/typescript-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="Python"
+    href="https://github.com/modelcontextprotocol/python-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="Java"
+    href="https://github.com/modelcontextprotocol/java-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="Kotlin"
+    href="https://github.com/modelcontextprotocol/kotlin-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="C#"
+    href="https://github.com/modelcontextprotocol/csharp-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="Go"
+    href="https://github.com/modelcontextprotocol/go-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="Ruby"
+    href="https://github.com/modelcontextprotocol/ruby-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="Rust"
+    href="https://github.com/modelcontextprotocol/rust-sdk"
+    icon="code-square"
+  />
+  <Card
+    title="Swift"
+    href="https://github.com/modelcontextprotocol/swift-sdk"
+    icon="code-square"
+  />
+</CardGroup>

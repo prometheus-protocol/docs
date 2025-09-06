@@ -1,0 +1,193 @@
+---
+title: 'CLI Commands'
+description: 'A complete reference for the Prometheus command-line interface tools.'
+---
+
+The Prometheus Protocol provides two primary command-line tools for interacting with the ecosystem: the **App Store CLI** for managing the full application lifecycle, and the **Auth CLI** for managing OAuth client registration.
+
+## The App Store CLI
+
+The official CLI for developers, auditors, and DAO members. It handles everything from submitting an app for verification to performing audits and finalizing governance votes.
+
+### Usage
+
+The way you invoke the CLI depends on your role:
+
+<Tabs>
+  <Tab title="For Developers">
+    The CLI is included in projects created with `create-motoko-mcp-server`. You interact with it via `npm run` scripts. Note the required `--` to pass arguments.
+
+    ```bash
+    npm run app-store -- <command> [options]
+    ```
+
+  </Tab>
+  <Tab title="For Auditors & DAO Members">
+    As an external user, you should use `npx` to ensure you are always running the latest version.
+
+    ```bash
+    npx @prometheus-protocol/app-store-cli <command> [options]
+    ```
+
+  </Tab>
+</Tabs>
+
+---
+
+### Developer Commands
+
+Commands for managing the application lifecycle from within your project.
+
+#### `init`
+
+Initializes a new `prometheus.yml` configuration file in the current directory. This file contains the metadata for your service.
+
+```bash
+npm run app-store init
+```
+
+#### `submit`
+
+Submits your service's WASM hash and metadata for verification based on your `prometheus.yml` config. This creates an entry in the App Store and opens it up for auditing.
+
+```bash
+npm run app-store submit
+```
+
+#### `status`
+
+Checks the current verification status of your application (e.g., Pending, Auditing, Verified, Rejected).
+
+```bash
+npm run app-store status
+```
+
+#### `publish`
+
+Publishes a new, DAO-verified version of your application to the App Store, making it visible to end-users.
+
+```bash
+npm run app-store -- publish --app-version "1.0.0"
+```
+
+---
+
+### Auditor & Bounty Commands
+
+Commands for discovering, auditing, and claiming rewards.
+
+#### `bounty list`
+
+Lists all available bounties on the network, showing their status (Open, Reserved, or Claimed).
+
+```bash
+npx @prometheus-protocol/app-store-cli bounty list
+```
+
+#### `bounty reserve <bounty-id>`
+
+Reserves an open bounty by staking your reputation tokens. This grants you an exclusive lock to perform the audit.
+
+```bash
+npx @prometheus-protocol/app-store-cli bounty reserve <bounty-id>
+```
+
+#### `bounty create`
+
+Creates a new bounty to incentivize a specific audit for a WASM.
+
+```bash
+npx @prometheus-protocol/app-store-cli bounty create <amount> <token-canister-id> --wasm-id <id> --audit-type <type>
+```
+
+#### `bounty claim <bounty-id>`
+
+Claims the reward for a reserved bounty after your corresponding attestation has been successfully submitted and approved.
+
+```bash
+npx @prometheus-protocol/app-store-cli bounty claim <bounty-id>
+```
+
+#### `attest generate`
+
+Generates a template YAML file for a specific audit type (e.g., `security_v1`).
+
+```bash
+npx @prometheus-protocol/app-store-cli attest generate --type security_v1
+```
+
+#### `attest submit <file>`
+
+Submits a completed attestation file for a bounty you have reserved.
+
+```bash
+npx @prometheus-protocol/app-store-cli attest submit attestation.yml --bounty-id <bounty_id>
+```
+
+---
+
+### DAO Commands
+
+Commands for governance and final verification.
+
+#### `dao list`
+
+Lists all WASM submissions that have new, unreviewed attestations awaiting a DAO vote.
+
+```bash
+npx @prometheus-protocol/app-store-cli dao list
+```
+
+#### `dao generate-ballot`
+
+Generates a template YAML file for a DAO member to formalize their vote on a submission.
+
+```bash
+npx @prometheus-protocol/app-store-cli dao generate-ballot --wasm-id <wasm_id>
+```
+
+#### `dao finalize`
+
+Submits a completed decision ballot file to finalize a submission's status (e.g., to `Verified` or `Rejected`).
+
+```bash
+npx @prometheus-protocol/app-store-cli dao finalize --file ballot.yml
+```
+
+---
+
+## The Auth CLI
+
+This tool manages your service's registration with the Prometheus OAuth provider. It is typically used via `npm run` scripts from within a service developer's project.
+
+#### `register`
+
+Interactively registers your service as a new OAuth client. It saves the output to `.auth_client.json`.
+
+```bash
+npm run auth register
+```
+
+#### `update`
+
+Interactively updates an existing OAuth client registration. This is commonly used to change the redirect URI when moving from a local to a production environment.
+
+```bash
+npm run auth update
+```
+
+#### `list`
+
+Lists all resource servers (OAuth clients) registered by your current identity.
+
+```bash
+npm run auth list
+```
+
+#### `delete`
+
+Deletes an existing resource server registration.
+
+```bash
+npm run auth delete
+```

@@ -1,0 +1,85 @@
+---
+title: 'Managing'
+description: 'Learn how to manage your treasury, enable analytics, and perform other day-to-day operational tasks.'
+---
+
+Your service is deployed, monetized, and published in the App Store. Now what? This guide covers the common operational tasks you'll perform to manage your live service.
+
+### Managing Your Treasury
+
+If you've enabled monetization, your service's canister acts as a secure, on-chain treasury, collecting all funds paid by your users. The project template includes several built-in functions to manage these funds.
+
+You can call these functions directly using the `dfx` command-line tool.
+
+- **`get_owner()`**: View the principal that currently owns and controls the canister.
+- **`set_owner(new_owner)`**: Transfer ownership of the canister to a new principal. (Owner only)
+- **`get_treasury_balance(ledger_id)`**: Check the canister's balance of any ICRC-1 token.
+- **`withdraw(ledger_id, amount, destination)`**: Withdraw funds from the treasury to any account. (Owner only)
+
+#### Example: Checking Your Balance
+
+To check your service's balance of a specific token, you need your service's canister ID and the token's ledger canister ID.
+
+```bash
+# Replace placeholders with your actual values
+dfx canister call <your_service_canister_id> get_treasury_balance '(principal "<token_ledger_id>")'
+```
+
+#### Example: Withdrawing Funds
+
+To withdraw funds, you'll also need the amount and the destination account.
+
+```bash
+# dfx canister call <canister_id> <method_name> '(arg1, arg2, ...)'
+dfx canister call <your_service_canister_id> withdraw '(principal "<token_ledger_id>", 100_000_000, record { owner = principal "<destination_principal>"; subaccount = null })'
+```
+
+---
+
+### Enabling Proof of Usage Rewards (Beacon)
+
+You can participate in the protocol's rewards program by enabling the optional usage beacon. This allows your service to submit **Proof of Usage** data to the Prometheus DAO, making you eligible for ecosystem rewards.
+
+**What data is collected?**
+The beacon periodically sends aggregated, privacy-preserving usage metrics to a public DAO service. Specifically, it collects:
+
+- Tool invocation counts
+- Total token amounts processed by your tools
+
+It is designed to be privacy-preserving and **does not** collect any sensitive user data, tool inputs, or IP addresses.
+
+<Warning>
+  **Prerequisite:** Your service's WASM must be verified and listed in the App
+  Store for its beacon data to be accepted. This is a security measure to
+  prevent abuse of the rewards system.
+</Warning>
+
+#### How to Enable the Beacon
+
+<Steps>
+  <Step title="Uncomment the Beacon Code">
+    Open `src/main.mo` in your editor, find the beacon section, and uncomment the block of code that initializes the `beaconContext`.
+
+    ```ts src/main.mo
+    // --- OPT-IN: USAGE ANALYTICS (BEACON) ---
+    let beaconContext = Beacon.init({
+      // The Prometheus DAO beacon canister ID
+      beacon_canister = principal "g6mnv-haaaa-aaaai-q32wq-cai";
+      // The interval between pings
+      interval = 24 * 3_600_000_000_000; // 24 hours in nanoseconds
+    });
+    ```
+
+  </Step>
+  <Step title="Redeploy Your Server">
+    Save the file and run `npm run deploy` (for local) or `npm run deploy:ic` (for mainnet) to update your service with the new logic.
+  </Step>
+</Steps>
+
+Your server will now submit Proof of Usage data, making it eligible for participation in DAO-governed reward programs.
+
+---
+
+### You've Completed the Guide!
+
+Congratulations on completing the Service Developer guide. You now have the knowledge to build, monetize, verify, and manage a service on the Prometheus Protocol.
