@@ -35,18 +35,24 @@ The path to launching a successful, trusted service on the protocol involves the
 
 Your project template comes pre-configured with two essential command-line tools, accessible via `npm run` scripts. It's critical to understand their distinct roles:
 
-<CardGroup cols={2}>
+<CardGroup cols={1}>
   <Card
-    title="The Auth Script (`npm run auth`)"
+    title="The Auth Script"
     href="/guides/service-devs/enabling-monetization"
     icon="key">
+    ```bash
+    npm run auth <command> [options]
+    ```
     This tool manages your service's identity. You'll use it to register your
     service as a client with the Prometheus OAuth provider.
   </Card>
   <Card
-    title="The App Store CLI (`npm run app-store`)"
+    title="The App Store CLI"
     href="/guides/service-devs/publishing-to-app-store"
     icon="store">
+    ```bash
+    npm run app-store <command> [options]
+    ```
     This tool manages the trust and verification lifecycle. You'll use it to
     submit your service for auditing and publish new versions to the App Store.
   </Card>

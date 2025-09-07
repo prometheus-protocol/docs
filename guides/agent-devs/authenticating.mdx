@@ -14,19 +14,19 @@ You do not need to manually register clients, handle secrets, or exchange codes.
 Here’s what you and your users will experience when connecting to a protected service for the first time:
 
 <Steps>
-  <Step title="1. Connection is Attempted">
+  <Step title="Connection is Attempted">
     Your application or SDK attempts to connect to the protected MCP server.
   </Step>
-  <Step title="2. Login Prompt Appears">
+  <Step title="Login Prompt Appears">
     The server recognizes that you are not authenticated and automatically
     triggers the login flow. A browser window will open, prompting the user to
     log in and grant your application consent.
   </Step>
-  <Step title="3. User Grants Consent">
+  <Step title="User Grants Consent">
     The user logs in with their identity and approves the permissions requested
     by the service (e.g., "Allow this agent to spend tokens on my behalf").
   </Step>
-  <Step title="4. Connection Succeeds">
+  <Step title="Connection Succeeds">
     Once consent is granted, the browser window closes. The SDK securely
     receives an access token in the background and automatically retries the
     connection, which now succeeds.

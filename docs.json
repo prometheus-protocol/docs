@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
   "name": "Prometheus Protocol",
+  "description": "Documentation for the Prometheus Protocol, the decentralized AI service marketplace on the Internet Computer.",
   "colors": {
     "primary": "#c2a23d",
     "light": "#c2a23d",
@@ -17,18 +18,31 @@
     "light": "/logo/light.png",
     "dark": "/logo/dark.png"
   },
+  "appearance": {
+    "default": "dark",
+    "strict": true
+  },
   "favicon": "/favicon.ico",
+  "fonts": {
+    "heading": {
+      "family": "Space Grotesk"
+    },
+    "body": {
+      "family": "Inter"
+    }
+  },
   "navigation": {
     "groups": [
       {
-        "group": "Prometheus Protocol",
+        "group": "Getting Started",
         "pages": ["index", "core-concepts", "architecture"]
       },
       {
         "group": "Guides",
         "pages": [
           {
-            "group": "For Service Developers",
+            "group": "For Developers",
+            "icon": "server",
             "pages": [
               "guides/service-devs/overview",
               "guides/service-devs/quickstart",
@@ -38,7 +52,8 @@
             ]
           },
           {
-            "group": "For AI Agent Developers",
+            "group": "For AI Agents",
+            "icon": "robot",
             "pages": [
               "guides/agent-devs/overview",
               "guides/agent-devs/discovery",
@@ -47,7 +62,8 @@
             ]
           },
           {
-            "group": "For Service Auditors",
+            "group": "For Auditors",
+            "icon": "shield-check",
             "pages": [
               "guides/auditors/overview",
               "guides/auditors/finding-audits",
@@ -66,21 +82,7 @@
           "reference/canister-ids"
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "App Store",
-          "href": "https://prometheusprotocol.org",
-          "icon": "play"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://discord.gg/gRehbTFZZ2",
-          "icon": "discord"
-        }
-      ]
-    }
+    ]
   },
   "navbar": {
     "links": [
@@ -91,7 +93,7 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Start Now",
+      "label": "App Store",
       "href": "https://prometheusprotocol.org"
     }
   },
@@ -109,8 +111,10 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify"
+      "x": "https://x.com/Prometheus9486",
+      "discord": "https://discord.gg/gRehbTFZZ2",
+      "github": "https://github.com/prometheus-protocol/prometheus-protocol",
+      "website": "https://prometheusprotocol.org"
     }
   }
 }
