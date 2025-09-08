@@ -1,3 +1,7 @@
 .nav-logo {
   min-height: 30px;
 }
+
+.almond-layout {
+  padding-right: 0 !important;
+}
