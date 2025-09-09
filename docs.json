@@ -32,6 +32,20 @@
     }
   },
   "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "App Store",
+          "icon": "house",
+          "href": "https://prometheusprotocol.org"
+        },
+        {
+          "anchor": "Roadmap",
+          "icon": "github",
+          "href": "https://github.com/prometheus-protocol/prometheus-protocol"
+        }
+      ]
+    },
     "groups": [
       {
         "group": "Getting Started",
@@ -97,6 +111,7 @@
       "href": "https://prometheusprotocol.org"
     }
   },
+
   "contextual": {
     "options": [
       "copy",
