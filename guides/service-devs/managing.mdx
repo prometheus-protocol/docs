@@ -38,10 +38,10 @@ dfx canister call <your_service_canister_id> withdraw '(principal "<token_ledger
 
 ### Enabling Proof of Usage Rewards (Beacon)
 
-You can participate in the protocol's rewards program by enabling the optional usage beacon. This allows your service to submit **Proof of Usage** data to the Prometheus DAO, making you eligible for ecosystem rewards.
+You can participate in the protocol's rewards program by enabling the optional usage beacon. This allows your service to submit **Proof of Usage** data, making you eligible for ecosystem rewards.
 
 **What data is collected?**
-The beacon periodically sends aggregated, privacy-preserving usage metrics to a public DAO service. Specifically, it collects:
+The beacon periodically sends aggregated, privacy-preserving usage metrics to a on-chain service. Specifically, it collects:
 
 - Tool invocation counts
 - Total token amounts processed by your tools
@@ -56,6 +56,8 @@ It is designed to be privacy-preserving and **does not** collect any sensitive u
 
 #### How to Enable the Beacon
 
+Enabling the beacon requires a code change. Because the Prometheus Protocol manages all deployments to ensure code is verified, you must publish a new version of your service to activate it.
+
 <Steps>
   <Step title="Uncomment the Beacon Code">
     Open `src/main.mo` in your editor, find the beacon section, and uncomment the block of code that initializes the `beaconContext`.
@@ -63,7 +65,7 @@ It is designed to be privacy-preserving and **does not** collect any sensitive u
     ```ts src/main.mo
     // --- OPT-IN: USAGE ANALYTICS (BEACON) ---
     let beaconContext = Beacon.init({
-      // The Prometheus DAO beacon canister ID
+      // The Prometheus beacon canister ID
       beacon_canister = principal "g6mnv-haaaa-aaaai-q32wq-cai";
       // The interval between pings
       interval = 24 * 3_600_000_000_000; // 24 hours in nanoseconds
@@ -71,12 +73,24 @@ It is designed to be privacy-preserving and **does not** collect any sensitive u
     ```
 
   </Step>
-  <Step title="Redeploy Your Server">
-    Save the file and run `npm run deploy` (for local) or `npm run deploy:ic` (for mainnet) to update your service with the new logic.
+  <Step title="Commit the Changes">
+    Save the file and commit the update to your Git repository. The publishing process is tied to your commit history.
+
+    ```bash
+    git add src/main.mo
+    git commit -m "feat: enable usage beacon"
+    ```
+
+  </Step>
+  <Step title="Publish the New Version">
+    You must now re-publish your service. This will submit your new code for verification and, once approved, the protocol will deploy it as a new version.
+
+    Follow the same steps in the **[Publishing guide](/guides/service-devs/publishing)**, making sure to use your **new Git commit hash**. This ensures that the change is audited and transparently recorded on-chain.
+
   </Step>
 </Steps>
 
-Your server will now submit Proof of Usage data, making it eligible for participation in DAO-governed reward programs.
+Your server will now submit Proof of Usage data, making it eligible for reward programs once the new version is verified and deployed.
 
 ---
 

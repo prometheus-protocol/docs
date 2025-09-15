@@ -1,11 +1,9 @@
 ---
 title: 'Quick Start'
-description: 'Go from a new project to a running local MCP server in minutes.'
+description: 'Go from zero to a running local MCP server in minutes.'
 ---
 
-This guide will walk you through the fastest way to get your new MCP server running on your local machine. By the end, you'll have a deployed, testable service.
-
-We assume you have already created a project using `create-motoko-mcp-server`.
+This guide will walk you through the fastest way to get a new MCP server running on your local machine. By the end, you'll have a deployed, testable service.
 
 ### Prerequisites
 
@@ -14,10 +12,38 @@ Before you begin, make sure you have the following tools installed on your syste
 - **DFX:** The DFINITY Canister SDK. [Installation Guide](https://internetcomputer.org/docs/current/developer-docs/setup/install/).
 - **Node.js:** Version 18.0 or higher. [Download](https://nodejs.org/).
 - **MOPS:** The Motoko Package Manager. [Installation Guide](https://mops.one/docs/install).
+- **Git:** The version control system. [Download](https://git-scm.com/).
 
-### Step 1: Install Dependencies
+### Step 1: Scaffold Your Project
 
-First, you need to install the project's dependencies. The template uses both Node.js for scripting and MOPS for Motoko packages.
+First, create a new project using our template. This sets up a complete, ready-to-run MCP server.
+
+```bash
+# Creates a new project in a directory called `my-mcp-server`
+npx create-motoko-mcp-server my-mcp-server
+
+# Navigate into your new project directory
+cd my-mcp-server
+```
+
+### Step 2: Initialize Your Repository
+
+The Prometheus publishing process is tied to your Git history. Initialize a repository and make your first commit now so you're ready to publish later.
+
+```bash
+# Initialize a new Git repository
+git init
+
+# Stage all the new files
+git add .
+
+# Make your first commit
+git commit -m "Initial commit from template"
+```
+
+### Step 3: Install Dependencies
+
+Next, you need to install the project's dependencies. The template uses both Node.js for scripting and MOPS for Motoko packages.
 
 Run the following commands from your project's root directory:
 
@@ -29,12 +55,18 @@ npm install
 npm run mops:install
 ```
 
-### Step 2: Deploy Your Server
+### Step 4: Deploy Your Server
 
-Next, you'll deploy the server to a local, simulated version of the blockchain network.
+Now, you'll deploy the server to a local, simulated version of the blockchain network.
 
 1.  **Start the Local Replica:**
     This command starts the local development network in the background.
+
+    <Info>
+      If you already have the local replica running from another project, you
+      can skip this step. You can check its status by running `dfx ping` in your
+      terminal. If it returns a healthy status, you're good to go.
+    </Info>
 
     ```bash
     npm run start
@@ -43,18 +75,18 @@ Next, you'll deploy the server to a local, simulated version of the blockchain n
 2.  **Deploy to the Local Replica:**
     This command compiles your Motoko code and deploys it to the local network.
 
-        <Info>
-          You must run this command in a **new terminal window**, as the local
-          replica will be running in your current one.
-        </Info>
+    <Info>
+      You must run this command in a **new terminal window**, as the local
+      replica will be running in your current one.
+    </Info>
 
-        ```bash
-        npm run deploy
-        ```
+    ```bash
+    npm run deploy
+    ```
 
-            After a moment, the CLI will output the canister ID of your deployed server. Keep this ID handy for the next step.
+    After a moment, the CLI will output the canister ID of your deployed server. Keep this ID handy for the next step.
 
-### Step 3: Test with the MCP Inspector
+### Step 5: Test with the MCP Inspector
 
 The MCP Inspector is a web-based tool for interacting with your server's tools.
 
@@ -79,4 +111,4 @@ The MCP Inspector is a web-based tool for interacting with your server's tools.
 
 🎉 **Congratulations!** You have a working MCP server running locally.
 
-In the next section, you'll learn how to enable monetization by adding authentication and connecting to the payments system.
+The next sections cover advanced topics like adding authentication and connecting to the payments system.

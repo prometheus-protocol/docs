@@ -7,25 +7,27 @@ The Audit Hub is your central marketplace for work within the Prometheus ecosyst
 
 ### Anatomy of an Audit Listing
 
-Each item in the Audit Hub queue provides all the information you need to decide if you want to take on the job.
+When you navigate to the Audit Hub, the "Open Bounties" tab shows all the individual audit tasks that are available to be claimed. Each item in this list provides the key information you need to decide if you want to take on the job.
 
 <Frame>
-  <img src="/public/audit-hub-ui.png" />
-  <figcaption>The Audit Hub, showing a list of pending audits.</figcaption>
+  <img src="/images/audit-hub-ui.png" />
+  <figcaption>
+    The Audit Hub, showing a list of open and claimed bounties.
+  </figcaption>
 </Frame>
 
-Here’s a breakdown of what you'll see for each service:
+Here’s a breakdown of the columns in the list:
 
-- **Server Name:** The name of the service awaiting audit.
-- **Audit Type:** The specific skill required for the audit. This corresponds to a specific Reputation Token (e.g., `security_v1`).
-- **Reward:** The amount of reward tokens (e.g., preMCPT) you will earn for successfully completing the audit.
-- **Required Stake:** The amount and type of Reputation Tokens you must stake to claim this audit (e.g., "Stake: 10,000 security_v1 Tokens").
-- **Status:** The current state of the audit.
-  - **Open:** The audit is available for any qualified auditor to claim.
-  - **Claimed by [Principal]:** The audit has been reserved by another auditor.
+- **AUDIT ID:** A unique identifier for this specific audit bounty.
+- **AUDIT TYPE:** The specific declarative audit required (e.g., `data_safety_v1`, `build_reproducibility_v1`). This tells you what kind of review is needed.
+- **WASM:** The cryptographic hash of the compiled code that needs to be audited. You'll notice that multiple audit types can be associated with the same WASM hash; these are all part of the verification process for a single service version.
+- **REWARD:** The bounty you will earn for successfully completing the audit.
+- **STATUS:** The current state of the audit.
+  - **Open:** The audit is available for any qualified auditor to claim. (Note: The screenshot shows claimed audits, but open ones will appear similarly).
+  - **Claimed:** The audit has been reserved by another auditor.
 
-You can browse this list to find work that matches your specific credentials and reward expectations.
+You can use the search bar to filter by a specific audit type or WASM hash to find work that matches your skills and interests.
 
 ---
 
-Once you've found an audit you want to perform, the next step is to claim it by staking your reputation.
+Once you've found an audit you want to perform, the next step is to claim it.

@@ -24,14 +24,19 @@ The certificate page provides a detailed breakdown of the service's audit result
 
 When evaluating a certificate, focus on these key areas:
 
-1.  **Verification Tier & Overall Score:**
-    - The **"Gold Verified"** badge is the highest tier, indicating the service passed rigorous, independent security audits with an outstanding score.
-    - The **Overall Score** (e.g., 95/100) is a quick, at-a-glance summary of the audit results.
+1.  **Verification Tier:**
+    The badge at the top represents the service's overall level of trust, based on the audits it has passed.
+    - **Gold:** The highest tier. The service has a reproducible build and has passed all declarative audits, including App Information, Tools & Dependencies, and Data Safety.
+    - **Silver:** A high level of trust. The service has a reproducible build and has passed audits for App Information and Tools & Dependencies.
+    - **Bronze:** The foundational tier of trust. The service has a reproducible build and has passed the App Information audit.
+    - **Unranked:** The service has not yet passed the minimum audits required for a Bronze tier.
 
-2.  **Category Scores:**
-    The overall score is a composite of several categories, including:
-    - **Build (92/100):** This score evaluates the quality, reproducibility, and best practices of the service's source code and build process.
-    - **Security (98/100):** This score reflects the service's resilience against common vulnerabilities and attack vectors, as determined by the auditors.
+2.  **Audit Checklist:**
+    This section shows the status of individual, declarative audits. A service must pass a specific combination of these to achieve a verification tier.
+    - **Build Reproducibility:** Verifies that the deployed canister was built from the claimed source code. This is the cornerstone of on-chain trust and is required for any tier.
+    - **App Information:** Confirms the accuracy of the app's name, description, and publisher details.
+    - **Tools & Dependencies:** Verifies the tools, libraries, and dependencies used in the application.
+    - **Data Safety:** Assesses how the application collects, uses, and shares user data.
 
 3.  **Cryptographic Provenance:**
     This is the core of the on-chain trust. It provides a verifiable link between the source code, the compiled code, and the running service.
@@ -39,8 +44,8 @@ When evaluating a certificate, focus on these key areas:
     - **Git Commit:** The specific commit hash from the source code repository that corresponds to the deployed Wasm. You can click **"View Commit on GitHub"** to inspect the exact source code that was audited.
     - **Canister ID:** The on-chain address of the live, running service.
 
-A strong Prometheus Certificate, with high scores and complete provenance data, is your guarantee that the service you're about to use is exactly what it claims to be.
+A strong Prometheus Certificate, with a high verification tier and complete provenance data, is your guarantee that the service you're about to use is exactly what it claims to be.
 
 ---
 
-After you've discovered a service and verified its trustworthiness, the next step is to connect to it. If the service requires payment or authentication, you'll need to handle the OAuth flow.
+After you've discovered a service and verified its trustworthiness, the next step is to connect to it. If the service requires payment or authentication, you'll need to generate credentials to connect.

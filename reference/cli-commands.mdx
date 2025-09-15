@@ -7,7 +7,7 @@ The Prometheus Protocol provides two primary command-line tools for interacting 
 
 ## The App Store CLI
 
-The official CLI for developers, auditors, and DAO members. It handles everything from submitting an app for verification to performing audits and finalizing governance votes.
+The official CLI for developers, auditors, and community members. It handles everything from submitting an app for verification to performing audits and finalizing governance votes.
 
 ### Usage
 
@@ -22,7 +22,7 @@ The way you invoke the CLI depends on your role:
     ```
 
   </Tab>
-  <Tab title="For Auditors & DAO Members">
+  <Tab title="For Auditors & Community Members">
     As an external user, you should use `npx` to ensure you are always running the latest version.
 
     ```bash
@@ -64,7 +64,7 @@ npm run app-store status
 
 #### `publish`
 
-Publishes a new, DAO-verified version of your application to the App Store, making it visible to end-users.
+Publishes a new, verified version of your application to the App Store, making it visible to end-users.
 
 ```bash
 npm run app-store -- publish --app-version "1.0.0"
@@ -122,36 +122,6 @@ Submits a completed attestation file for a bounty you have reserved.
 
 ```bash
 npx @prometheus-protocol/app-store-cli attest submit attestation.yml --bounty-id <bounty_id>
-```
-
----
-
-### DAO Commands
-
-Commands for governance and final verification.
-
-#### `dao list`
-
-Lists all WASM submissions that have new, unreviewed attestations awaiting a DAO vote.
-
-```bash
-npx @prometheus-protocol/app-store-cli dao list
-```
-
-#### `dao generate-ballot`
-
-Generates a template YAML file for a DAO member to formalize their vote on a submission.
-
-```bash
-npx @prometheus-protocol/app-store-cli dao generate-ballot --wasm-id <wasm_id>
-```
-
-#### `dao finalize`
-
-Submits a completed decision ballot file to finalize a submission's status (e.g., to `Verified` or `Rejected`).
-
-```bash
-npx @prometheus-protocol/app-store-cli dao finalize --file ballot.yml
 ```
 
 ---

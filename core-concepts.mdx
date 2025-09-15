@@ -6,15 +6,15 @@ description: 'A deep dive into the three pillars of the Prometheus Protocol: Sec
 The Prometheus Protocol is built on three interconnected pillars that work together to create a self-sustaining, trustworthy economic engine for the decentralized AI economy. Understanding these concepts is key to understanding the power of the entire ecosystem.
 
 <CardGroup cols={1}>
-  <Card title="1. Secure Identity" href="#1-secure-identity--authorization">
+  <Card title="1. Secure Identity">
     A universal, standards-based authentication layer for both humans and AI
     agents.
   </Card>
-  <Card title="2. Verifiable Trust" href="#2-verifiable-trust--discovery">
+  <Card title="2. Verifiable Trust">
     A decentralized app store and software supply chain to ensure service
     quality and security.
   </Card>
-  <Card title="3. Direct Payments" href="#3-direct--efficient-payments">
+  <Card title="3. Direct Payments">
     A low-friction, programmable payment system designed for machine-to-machine
     commerce.
   </Card>
@@ -26,15 +26,16 @@ The Prometheus Protocol is built on three interconnected pillars that work toget
 
 #### The Problem
 
-For any economy to function, participants need a reliable way to identify themselves and authorize actions. In the AI economy, this is even more critical. How does a service know which user—or which AI agent—is making a request? How can a user grant specific, limited permissions to an agent without handing over their primary credentials?
+For any economy to function, participants need a reliable way to identify themselves and authorize actions. How does a service know which user—or which AI agent—is making a request? How can a user grant permissions to an agent without handing over their primary credentials?
 
 #### The Prometheus Solution
 
-Prometheus provides a full-featured, on-chain **OAuth 2.1 provider**. This serves as a robust and universal foundation for identity across the entire ecosystem. By adhering to a globally recognized standard, we ensure seamless and secure integration for any application.
+Prometheus provides a **unified identity model** built on the user's Principal ID. This single identity can be authenticated using two distinct, purpose-built methods:
 
-- **Standards-Based:** By implementing the OAuth 2.1 standard, developers can use familiar tools and libraries, dramatically lowering the barrier to entry.
-- **Human & Machine Identity:** The system is designed from the ground up to handle authentication for human users and authorization for autonomous AI agents.
-- **Granular Permissions:** Users can grant specific, revocable permissions (scopes) to services and agents, ensuring they remain in full control of their identity and assets.
+- **API Keys:** Long-lived credentials designed for programmatic use by autonomous agents, scripts, and backend services.
+- **OAuth 2.1 (JWTs):** A standards-based flow for interactive logins, allowing human users to securely connect to services through a familiar browser-based experience.
+
+This dual approach ensures that both humans and machines can securely interact with services, while developers only need to integrate a single authentication context on their backend.
 
 ---
 
@@ -42,16 +43,15 @@ Prometheus provides a full-featured, on-chain **OAuth 2.1 provider**. This serve
 
 #### The Problem
 
-The core challenge of a decentralized service economy is trust. How can you be sure a third-party service is secure, reliable, and won't manipulate data or poison AI models? Without a unified trust layer, the AI economy becomes fragmented and risky.
+The core challenge of a decentralized service economy is trust. How can you be sure a third-party service is secure, reliable, and that the code running on-chain is the same code that was audited?
 
 #### The Prometheus Solution
 
-We built a high-assurance **App Store and Software Supply Chain Hub**. This is more than just a list of services; it's a transparent, on-chain system for verifying software quality through economic incentives and community governance.
+We built an **on-chain software supply chain and App Store**. This is a transparent system that manages the entire lifecycle of a service, from source code to live deployment, verified at every step.
 
-- **On-Chain Registry:** A single, verifiable source of truth for all registered services and their version history.
-- **Audit Marketplace:** A bounty system that incentivizes independent security experts to audit services and submit their findings (attestations) on-chain.
-- **The Prometheus Certificate:** Verified services receive an on-chain certificate, a powerful and visible signal of quality and security that users and agents can instantly recognize.
-- **DAO Governance:** A decentralized autonomous organization (DAO) provides the final human oversight, reviewing completed audits to grant the final verification.
+- **Git-Based Publishing:** Developers submit a Git commit hash, creating an undeniable link to their source code.
+- **Automated Verification & Deployment:** The protocol automatically builds the code, verifies its hash, and—once audited—deploys it to a new canister. This guarantees that what was audited is what is running.
+- **Tiered Audits:** A bounty system incentivizes independent auditors to review the code. Passing these audits earns the service a **Prometheus Certificate** with a Gold, Silver, or Bronze tier, providing a clear, on-chain signal of its quality and security.
 
 ---
 
@@ -59,16 +59,16 @@ We built a high-assurance **App Store and Software Supply Chain Hub**. This is m
 
 #### The Problem
 
-The emerging machine-to-machine economy will be driven by high-frequency micro-transactions. Traditional payment systems, with their high fees, slow settlement times, and reliance on intermediaries, are completely unsuitable for this new paradigm.
+The emerging machine-to-machine economy will be driven by high-frequency micro-transactions. Traditional payment systems are too slow, expensive, and complex for this new paradigm.
 
 #### The Prometheus Solution
 
-Prometheus integrates a **direct token allowance system**. This empowers users to grant services direct, metered access to their tokens, enabling a new wave of monetizable applications without the friction of traditional finance.
+Prometheus integrates a **direct token allowance system** that serves as a single payment pool for a user's identity.
 
-- **User-Controlled Allowances:** Instead of making a payment for every action, users grant a service a pre-approved "allowance" that it can draw from over time.
-- **Metered Billing:** This system is perfect for pay-as-you-go models, where an AI agent might consume API credits or computational resources on a per-call basis.
-- **Low-Friction M2M Commerce:** By removing intermediaries, we enable direct, programmable, and near-zero fee payments, providing the fuel for a truly autonomous economy.
+- **Unified Allowance Pool:** A user grants a service a single, pre-approved spending allowance from their Principal.
+- **Flexible Access:** Both API Key-authenticated agents and JWT-authenticated user sessions draw from this same allowance pool, simplifying fund management.
+- **Low-Friction M2M Commerce:** This model is perfect for pay-as-you-go billing, enabling direct, programmable, and near-zero fee payments—the fuel for a truly autonomous economy.
 
-### The Flywheel Effect
+## The Flywheel Effect
 
-These three pillars are designed to reinforce each other. **Identity** enables secure **Payments**, and the **Trust** provided by the App Store gives users the confidence to grant those payment allowances, driving economic activity for the entire ecosystem.
+These three pillars are designed to reinforce each other. **Identity** enables secure **Payments**, and the **Trust** provided by the end-to-end verification process gives users the confidence to grant those payment allowances, driving economic activity for the entire ecosystem.

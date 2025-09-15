@@ -1,92 +1,79 @@
 ---
 title: 'Publishing'
-description: 'Submit your service for a decentralized audit and get listed in the Prometheus App Store.'
+description: 'Submit your service for a decentralized audit and get it deployed to mainnet.'
 ---
 
-Once your service is built, tested, and monetized, the final step is to make it discoverable and signal its quality to the world. The Prometheus App Store is the central hub where users and AI agents find trusted, community-vetted services.
+Once your service is built and tested, the final step is to publish it. This makes it discoverable in the Prometheus App Store and signals its quality to the world.
 
-This guide will walk you through using the `app-store` CLI to get your service verified and published.
+This guide will walk you through using the `app-store` CLI to get your service verified and deployed on the main network.
 
 ### The Verification Process
 
-Publishing is more than just adding your service to a list. It's a formal, on-chain process that involves three distinct phases:
+Publishing is a formal, on-chain process that gets your code from your machine to a live mainnet canister.
 
-1.  **Submission:** You submit your service's code and metadata to the protocol. This creates a public audit bounty.
-2.  **Audit & Verification:** Independent auditors review your service. If it passes, the DAO provides the final on-chain verification.
-3.  **Publication:** Once verified, you can publish the specific version, making it visible and marked as trusted in the App Store.
+1.  **Publish:** You submit your service's Git commit hash and metadata to the protocol.
+2.  **Build & Verify:** The protocol's automated system checks out your code, builds the WASM file, and verifies that its hash matches the one produced on your machine. This proves the source code is what you claim it is.
+3.  **Deploy:** Once the build verification passes, the protocol automatically creates a new canister on your behalf and deploys the verified WASM to the main network.
+4.  **Audits:** Independent auditors review your source code for quality and security. You can add bounties to incentivize faster reviews.
 
-### Step 1: Deploy to the Main Network
+### Step 1: Get Your Git Commit Hash
 
-Before you can submit your service for a mainnet audit, you must deploy it to the main network.
-
-<Steps>
-
-<Step title="Deploy Your Service to Mainnet">
+The entire verification process is anchored to a specific Git commit. This ensures that the code being audited is exactly the code you intended to publish. Make sure all your changes are committed.
 
 ```bash
-npm run deploy:ic
+# This command gets the hash of your latest commit
+git rev-parse HEAD
 ```
 
-This command will deploy your service to the live network and provide you with a mainnet canister ID.
+Copy this hash; you'll need it in a moment.
 
-</Step>
+### Step 2: Find Your WASM Path
 
-<Step title="Update Your OAuth Client">
+The publishing tool needs to know where your compiled canister WASM is located so it can hash it for verification. After running a local deploy (`npm run deploy`), you can find it at this path:
 
-<Warning>
-  This is a critical step. Your OAuth client is still configured for your local
-  environment. You must update it with your new mainnet URL.
-</Warning>
-**Construct Your Mainnet URL:** Use your mainnet canister ID to create the URL
-for your service.
+```
+.dfx/local/canisters/<canister_name>/<canister_name>.wasm
+```
 
-    ```
-    # Replace `your_mainnet_canister_id` with the actual ID from the deploy output
-    https://your_mainnet_canister_id.icp0.io
-    ```
+For example, if your canister is named `my_mcp_server`, the path would be `.dfx/local/canisters/my_mcp_server/my_mcp_server.wasm`.
 
-</Step>
-</Steps>
+### Step 3: Initialize the App Store Configuration
 
-### Step 2: Initialize the App Store Configuration
-
-The `app-store` CLI needs a configuration file to know what to submit.
+The `app-store` CLI needs a configuration file to know what to submit. If you haven't already, initialize it.
 
 ```bash
 npm run app-store init
 ```
 
-This command creates a `prometheus.yml` file in your project root. Open this file and fill in the details about your service, such as its name, description, and the mainnet canister ID from the previous step.
+This command creates a `prometheus.yml` file in your project root. Open this file and fill in the details about your service, such as its name and description.
 
-### Step 3: Submit for Verification
+### Step 4: Publish Your Service
 
-Now, submit your service to the protocol. This action reads your `prometheus.yml`, records your service's code hash on-chain, and officially opens it up for auditing.
-
-```bash
-npm run app-store submit
-```
-
-### Step 4: Monitor the Verification Status
-
-The audit and DAO verification process is performed by other members of the ecosystem and can take time. You can check the status of your submission at any point using the `status` command.
+Now, publish your service to the protocol. This single command bundles your code's proof (the commit hash and WASM hash), WASM, and your metadata, and submits it to the Audit Hub.
 
 ```bash
-npm run app-store status
+npm run app-store publish "0.1.0"
 ```
 
-You must wait until the status is `Verified` before proceeding to the final step.
+Replace `"0.1.0"` with your service's version number.
 
-### Step 5: Publish the Verified Version
+### Step 5: Monitor the Verification Status
 
-Once your service has been successfully verified by the auditors and the DAO, you have the green light to publish it. This final command makes the verified version visible in the App Store, complete with its **Prometheus Certificate**.
+Once you've published, your submission enters the audit queue. You can track its progress on the Prometheus Audit Hub.
 
-```bash
-# You can add a version number for your release
-npm run app-store -- publish --app-version "1.0.0"
-```
+1.  Go to **[https://prometheusprotocol.org/audit-hub](https://prometheusprotocol.org/audit-hub)**
+2.  Click on the **"Pending Verifications"** tab.
+3.  Find your service by its WASM hash.
+
+Once complete, your MCP server will appear on the home page.
+
+#### Speeding Up the Review
+
+The audit is performed by other members of the ecosystem. To get your service reviewed faster, you can add a bounty to your submission.
+
+- **Add a Bounty:** Use the app store UI to add a bounty to your pending audit, making it more attractive for reviewers.
+- **Request a Bounty:** If you don't want to fund it yourself, you can post in our Discord and ask if another community member is willing to sponsor your review.
 
 ---
 
-🎉 **Congratulations!** Your service is now a trusted, verified, and discoverable part of the Prometheus ecosystem.
-
-The final page in this guide covers the day-to-day management of your live server, such as handling your treasury.
+🎉 **Congratulations!** Your MCP server is a trusted, verified, and discoverable part of the Prometheus ecosystem.

@@ -60,8 +60,8 @@
             "pages": [
               "guides/service-devs/overview",
               "guides/service-devs/quickstart",
-              "guides/service-devs/monetization",
               "guides/service-devs/publishing",
+              "guides/service-devs/monetization",
               "guides/service-devs/managing"
             ]
           },

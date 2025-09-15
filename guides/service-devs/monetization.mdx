@@ -3,14 +3,26 @@ title: 'Monetization'
 description: 'Learn how to add paid tools by integrating the Prometheus identity and payment pillars.'
 ---
 
-A basic MCP server is useful, but a monetized one can become a self-sustaining business. This guide will show you how to activate the pre-built monetization features in your project template.
+A basic MCP server is useful, but a monetized one can become a self-sustaining business. This guide will show you how to activate the pre-built monetization features in your project template, enabling your service to accept payments from both human users and automated agents.
 
-Enabling monetization is a two-part process:
+### The Unified Identity & Payment Model
 
-1.  **Activating Authentication:** Protecting your tools so only authorized users can call them.
-2.  **Registering Your Service:** Connecting your server to the Prometheus Identity provider so it can issue tokens.
+Our platform uses a unified identity and payment model that securely supports both interactive and programmatic (machine-to-machine) use cases.
 
-### Step 1: Activate Monetization
+Think of it like a debit card system for the decentralized web. A user's **Principal** is their bank account, which holds their funds. They authorize services to draw from this account using two types of credentials: a short-lived **JWT** for interactive sessions, and a long-lived **API Key** for automated services.
+
+The entire system is built on a single, non-custodial principle:
+
+- **Identity is the Principal:** The user's on-chain identity is always their Principal ID.
+- **Payment is the Allowance:** A user grants a spending allowance (via `icrc2_approve`) from their Principal to your service. This allowance is the single source of truth for all payments.
+
+The credential a user presents—whether a JWT or an API Key—simply acts as a cryptographic proof that they are the owner of the Principal. The payment logic in your service is identical in both cases: it verifies the credential, identifies the user's Principal, and attempts to draw from that Principal's pre-approved allowance.
+
+By following the steps below, your service will automatically support both access methods.
+
+---
+
+### Step 1: Activate Monetization in Your Code
 
 Your project template contains all the necessary code for monetization, but it's commented out by default. In this step, you'll activate it.
 
@@ -19,7 +31,7 @@ Open the `src/main.mo` file in your editor. You will need to uncomment three sec
 <Steps>
 
 <Step title="Update the Tools to Require Payment">
-    Find the `tools` array and uncomment the `payment` block inside the `get_weather` tool definition. This tells the MCP SDK that calling this tool requires a valid payment.
+    Find the `tools` array and uncomment the `payment` block inside the `get_weather` tool definition. This tells the MCP SDK that calling this tool requires a valid payment from an authenticated Principal.
 
     ```ts src/main.mo
     let tools : [MCP.Tool] = [
@@ -38,26 +50,26 @@ Open the `src/main.mo` file in your editor. You will need to uncomment three sec
 </Step>
 <Step title="Configure the Allowance Management URL">
 
-    Uncomment the `allowanceUrl` in the `mcpConfig`. This URL is returned to clients and AI agents, directing users to the web dashboard where they can manage their token allowances for your service.
+    Uncomment the `allowanceUrl` in the `mcpConfig`. This URL is returned to clients and AI agents, directing users to the web dashboard where they can manage their token allowances and API keys for your service.
 
     ```ts src/main.mo
     let mcpConfig : MCP.Config = {
       // ...
-      allowanceUrl = ?"https://bmfnl-jqaaa-aaaai-q32ha-cai.icp0.io";
+      allowanceUrl = ?"https://prometheusprotocol.org/connections";
     };
     ```
 
 </Step>
 <Step title="Initialize the Authentication Context">
 
-    Finally, find and uncomment the large block of code that initializes the `authContext`. This is the core logic that integrates your server with the Prometheus OAuth provider, enabling it to validate access tokens on incoming requests.
+    Finally, find and uncomment the large block of code that initializes the `authContext`. This is the core logic that integrates your server with the Prometheus identity layer, enabling it to validate access tokens (both JWTs and API Keys) on incoming requests.
 
     ```ts src/main.mo
     // URL of the Prometheus OAuth 2.1 provider
     let issuerUrl = "https://bfggx-7yaaa-aaaai-q32gq-cai.icp0.io";
 
-    // URL of the allowance management dashboard (OAuth provider frontend)
-    let allowanceUrl = "https://bmfnl-jqaaa-aaaai-q32ha-cai.icp0.io";
+    // URL of your service's frontend (for interactive login redirects)
+    let frontendUrl = "https://prometheusprotocol.org/oauth";
 
     // The scopes your service requires. "openid" is always required.
     let requiredScopes = ["openid"];
@@ -92,11 +104,45 @@ Now that the code is activated, save the `src/main.mo` file and deploy the new l
 npm run deploy
 ```
 
-Your server's tools are now protected. If you try to call them from the MCP Inspector, the calls will fail because they are missing a valid authentication token.
+Your server's tools are now protected. If you try to call them from the MCP Inspector without a valid credential, the calls will fail.
 
-### Step 3: Register with Auth Server
+### Step 3: Generate and Test an API Key
 
-The final step is to register your running server as a valid client with the central Prometheus Auth Server. This allows the auth server to issue tokens that your service will accept.
+With the authentication context active, your service can now issue and validate API keys out of the box. You can test this programmatic access flow by calling your canister directly with `dfx` to generate a key. The key will be linked to your current `dfx` identity.
+
+<Steps>
+<Step title="Generate the Key">
+Run the following command, replacing `<your_canister_id>` with the ID from the `npm run deploy` output.
+
+```bash
+dfx canister call <your_canister_id> create_api_key '("My Test Key")'
+```
+
+The command will return your new API key.
+
+<Warning>
+  **Save this key immediately!** This is the only time it will be visible.
+</Warning>
+
+</Step>
+<Step title="Test the Key in MCP Inspector">
+You can now use this key to call a protected tool. The key must be passed in via the `x-api-key` header.
+
+1. Open the MCP Inspector if it's not already open: `npx @modelcontextprotocol/inspector`
+2. Set transport type to Streamable HTTP, and enter the URL of your local server (e.g., `http://127.0.0.1:4943/mcp?canisterId=tnszz-sh777-77774-qaasa-cai`).
+3. Click the Authentication button, and set API Token Authentication using `x-api-key` as the header name and your generated API key as the value.
+4. Click Connect.
+
+   If successful, your server will return the weather data, proving that your API key authentication and payment logic is working correctly.
+
+</Step>
+</Steps>
+
+---
+
+### Optional: Enable Interactive Login for Web Apps
+
+While API keys are ideal for scripts and backend services, you may also want to allow human users to log in through a browser-based flow (e.g., from the Prometheus App Store). To enable this, you must register your service as an OAuth client.
 
 Your project includes a built-in script to handle this. Run the following command:
 
@@ -104,15 +150,10 @@ Your project includes a built-in script to handle this. Run the following comman
 npm run auth register
 ```
 
-This command will interactively guide you through the registration process.
-
-<Info>
-  The `auth` script has several commands. You can see all available options by
-  running `npm run auth -- --help`.
-</Info>
+This command will interactively guide you through the registration process. Once complete, users will be able to log into your service using their standard Prometheus identity and wallets.
 
 ---
 
-Your server is now a fully monetized service, capable of authenticating users and requiring payments for its tools.
+🎉 **Congratulations!** Your server is now a fully monetized service. You've enabled and tested programmatic access via API Keys and you know how to add browser-based login for interactive web apps.
 
-Next, you'll learn how to submit your completed server to the Prometheus App Store to get it verified and discovered by the community.
+Next, you'll learn how to manage your service post-launch, including withdrawing funds from your treasury and enabling usage analytics.

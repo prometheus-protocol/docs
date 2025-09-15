@@ -1,30 +1,91 @@
 ---
 title: 'Authenticating'
-description: 'How the Prometheus SDKs automatically handle authentication for protected or paid services.'
+description: 'How to generate and use API keys to allow your agent to access protected or paid services.'
 ---
 
-Many services in the App Store, especially those that require payment, are protected. To use them, your agent must be authenticated.
+Many services in the App Store, especially those that require payment, are protected. To use them, your agent must present a valid credential.
 
-Fortunately, this process is designed to be seamless and is handled automatically by the Model Context Protocol (MCP) client or SDK you are using.
+The primary method for programmatic clients like AI agents is a long-lived **API Key**. However, for user-facing applications (like a desktop app or IDE plugin), a browser-based **OAuth 2.1 Login** flow is also supported. This guide covers both.
 
-### The Seamless Authentication Flow
+### Primary Method: API Keys for Autonomous Agents
 
-You do not need to manually register clients, handle secrets, or exchange codes. The entire process is managed for you behind the scenes using the secure, industry-standard OAuth 2.1 protocol with PKCE and Dynamic Client Registration.
+This process is designed for non-interactive use cases like backend services or autonomous agents. As the user running the agent, you will perform a one-time setup in the App Store UI to provision a key. Your agent then uses this key for all subsequent requests.
 
-Here’s what you and your users will experience when connecting to a protected service for the first time:
+<Steps>
+  <Step title="1. Set a Spending Allowance">
+    Before your agent can use a paid service, you must authorize it to spend funds on your behalf. This is done by setting an allowance.
+
+    1.  Navigate to the service's detail page in the Prometheus App Store.
+    2.  Find the "Access & Billing" section.
+    3.  Click "Manage Allowance" and approve a spending limit with your wallet. This is a non-custodial `icrc2_approve` transaction; funds remain in your wallet until they are spent.
+
+  </Step>
+  <Step title="2. Generate an API Key">
+    Once the allowance is set, you can create an API key.
+
+    1.  In the same "Access & Billing" section, click "Create API Key".
+    2.  Give the key a descriptive name (e.g., "My-Claude-Agent-Key").
+    3.  The new key will be displayed on your screen.
+
+    <Warning>
+      **Copy this key immediately and store it securely!** For your security, this is the only time the full key will be visible.
+    </Warning>
+
+  </Step>
+  <Step title="3. Configure Your Agent">
+    With the API key copied, the final step is to provide it to your agent or SDK. The key must be sent in the `x-api-key` header of every request.
+  </Step>
+</Steps>
+
+#### SDK Implementation (API Key)
+
+If you are building a custom client with the `@modelcontextprotocol/sdk`, you provide the API key when you create the transport layer.
+
+```typescript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+
+// The URL of the protected service from the App Store
+const serviceUrl = 'https://<canister_id>.icp0.io/mcp/';
+
+// Your securely stored API key
+const apiKey = 'prom_sk_123abc...';
+
+const client = new Client({ name: 'my-custom-agent', version: '1.0.0' });
+
+// Pass the API key in the 'x-api-key' header when creating the transport
+const transport = new StreamableHTTPClientTransport(new URL(serviceUrl), {
+  headers: {
+    'x-api-key': apiKey,
+  },
+});
+
+// This call now connects directly without any browser interaction.
+await client.connect(transport);
+```
+
+---
+
+### Optional: Interactive Login for User-Facing Applications
+
+While API keys are ideal for autonomous agents, the Prometheus SDK also supports a browser-based OAuth 2.1 flow. This method is designed for applications where a **user is present** to interactively log in and grant consent.
+
+#### The Seamless Login Flow
+
+You do not need to manually register clients or handle tokens. The SDK manages the entire process.
 
 <Steps>
   <Step title="Connection is Attempted">
-    Your application or SDK attempts to connect to the protected MCP server.
+    Your application attempts to connect to the protected MCP server.
   </Step>
   <Step title="Login Prompt Appears">
-    The server recognizes that you are not authenticated and automatically
-    triggers the login flow. A browser window will open, prompting the user to
-    log in and grant your application consent.
+    The SDK detects the need for authentication and automatically opens a
+    browser window, prompting the user to log in and grant your application
+    consent.
   </Step>
   <Step title="User Grants Consent">
-    The user logs in with their identity and approves the permissions requested
-    by the service (e.g., "Allow this agent to spend tokens on my behalf").
+    The user logs in with their identity and approves the permissions (e.g.,
+    "Allow this agent to spend tokens on my behalf").
   </Step>
   <Step title="Connection Succeeds">
     Once consent is granted, the browser window closes. The SDK securely
@@ -33,15 +94,9 @@ Here’s what you and your users will experience when connecting to a protected 
   </Step>
 </Steps>
 
-All subsequent calls to the service's tools will be automatically authenticated. The SDK manages the token lifecycle (including refreshing expired tokens) for you.
+#### SDK Implementation (Interactive Login)
 
-### For Users of Existing MCP Clients
-
-If you are using an application like **Cursor, Claude, or VS Code**, this entire flow will happen automatically the first time you try to use a protected tool. Simply follow the on-screen instructions in the browser window that appears.
-
-### For Developers Using the SDK
-
-If you are building a custom client with the `@modelcontextprotocol/sdk`, the magic happens when you call `client.connect()`.
+To trigger this flow, simply attempt to connect **without** providing an API key. The SDK handles the rest.
 
 ```typescript
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -51,6 +106,8 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 const serviceUrl = 'https://<canister_id>.icp0.io/mcp/';
 
 const client = new Client({ name: 'my-custom-agent', version: '1.0.0' });
+
+// Create the transport WITHOUT any authentication headers
 const transport = new StreamableHTTPClientTransport(new URL(serviceUrl));
 
 // This single call handles everything.
@@ -58,8 +115,8 @@ const transport = new StreamableHTTPClientTransport(new URL(serviceUrl));
 await client.connect(transport);
 
 // You are now connected and authenticated.
-// All subsequent calls are automatically handled by the SDK.
+// The SDK will automatically manage tokens for all subsequent calls.
 const result = await client.callTool({ name: 'some_paid_tool' });
 ```
 
-When you call `client.connect()` on a protected service, the SDK automatically detects the need for authentication and triggers the browser-based flow. After the user grants consent, the SDK securely stores the tokens and includes them in all future requests. **You do not need to manage tokens manually.**
+---

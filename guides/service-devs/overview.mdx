@@ -3,11 +3,11 @@ title: 'Overview'
 description: 'Your complete guide to building, monetizing, and verifying a service on the Prometheus Protocol.'
 ---
 
-Welcome, service developer! This guide is your primary resource for building on the Prometheus Protocol. We assume you've started by scaffolding a new project with our `create-motoko-mcp-server` template.
+Welcome, MCP server developer!
 
 This guide will walk you through the entire lifecycle of a service: from a local "Hello, World" to a monetized, globally-available application listed in the decentralized App Store.
 
-### The Service Developer Journey
+### The Developer Journey
 
 The path to launching a successful, trusted service on the protocol involves these key stages. This guide is structured to walk you through each one.
 
@@ -22,8 +22,8 @@ The path to launching a successful, trusted service on the protocol involves the
   </Step>
   <Step title="3. Publish to the App Store">
     Submit your service for a decentralized audit. A successful verification
-    earns you a **Prometheus Certificate**, a powerful signal of trust and
-    security.
+    earns you a **Prometheus Certificate** and a live deployment on the main
+    network.
   </Step>
   <Step title="4. Manage Your Server">
     Learn how to manage your service post-launch, including withdrawing funds
@@ -38,7 +38,6 @@ Your project template comes pre-configured with two essential command-line tools
 <CardGroup cols={1}>
   <Card
     title="The Auth Script"
-    href="/guides/service-devs/monetization"
     icon="key">
     ```bash
     npm run auth <command> [options]
@@ -48,13 +47,12 @@ Your project template comes pre-configured with two essential command-line tools
   </Card>
   <Card
     title="The App Store CLI"
-    href="/guides/service-devs/publishing"
     icon="store">
     ```bash
     npm run app-store <command> [options]
     ```
     This tool manages the trust and verification lifecycle. You'll use it to
-    submit your service for auditing and publish new versions to the App Store.
+    publish your service for auditing and deployment.
   </Card>
 </CardGroup>
 

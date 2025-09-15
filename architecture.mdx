@@ -13,16 +13,14 @@ The protocol is composed of several key on-chain services working in concert to 
 
 <CardGroup cols={1}>
   <Card title="The Identity Provider" icon="key" href="#">
-    An on-chain OAuth 2.1 server that **services in the App Store** can use to
-    authenticate their end-users and AI agents.
+    An on-chain service that issues and validates credentials. It provides both
+    API Keys for programmatic clients and OAuth 2.1 tokens for interactive user
+    sessions.
   </Card>
-  <Card title="The App Store & Trust Hub" icon="store" href="#">
-    The core of the trust layer. It manages the versioned registry, the audit
-    and bounty lifecycle, and on-chain attestations.
-  </Card>
-  <Card title="The Secure Deployer" icon="rocket" href="#">
-    The deployment engine. It ensures that only DAO-verified code can be
-    deployed, enforcing the integrity of the software supply chain.
+  <Card title="The Trust & Deployment Hub" icon="shield-check" href="#">
+    The core of the trust layer. It manages the service registry, the audit and
+    bounty lifecycle, and the secure deployment pipeline that takes verified
+    code and deploys it to the mainnet.
   </Card>
 </CardGroup>
 
@@ -32,26 +30,30 @@ The protocol is composed of several key on-chain services working in concert to 
 
 A critical concept in the Prometheus architecture is the distinction between two types of identity:
 
-1.  **Protocol Participant Identity:** The identities of developers, auditors, and DAO members who build and govern the ecosystem.
+1.  **Protocol Participant Identity:** The identities of developers and auditors who build and secure the ecosystem.
 2.  **End-User & Agent Identity:** The identities of the final consumers who interact with the services listed in the App Store.
 
 #### 1. Protocol Participants (The "Supply Side")
 
-Developers, auditors, and DAO members interact directly with the protocol's core services to perform governance and supply-chain functions.
+Developers and auditors interact directly with the protocol's core services to perform supply-chain functions.
 
-- **Actions:** Submitting code, creating bounties, submitting attestations, and voting.
-- **Identity:** These actions are authorized using the blockchain's native identity system (principals). Participants typically manage their identity using tools like the **Prometheus CLI**, which leverages this native identity for secure, on-chain operations.
+- **Actions:** Publishing code, claiming bounties, submitting audit results.
+- **Identity & Tools:** These actions are authorized using the blockchain's native identity system (principals). However, the tools used differ by role:
+  - **Developers** use the **Prometheus CLI** to perform command-line operations like publishing new service versions.
+  - **Auditors** use the **Prometheus web UI** (the Audit Hub) to find and claim bounties, review code, and submit their results.
 
-This ensures that every critical action affecting the software supply chain is cryptographically signed and attributable to a specific on-chain identity.
+This ensures that every critical action affecting the software supply chain is cryptographically signed and attributable to a specific on-chain identity, using the optimal tool for the job.
 
 #### 2. End-Users & Agents (The "Demand Side")
 
 When an end-user or an AI agent wants to use a service from the App Store, they need a more user-friendly and standards-based way to authenticate. This is the role of the **Identity Provider**.
 
-- **Actions:** Logging into a service, authorizing an agent, granting payment allowances.
-- **Identity:** The protocol's on-chain **OAuth 2.1 server** provides this functionality. Service developers can integrate this provider to give their users a familiar, secure login experience and to enable programmatic, permissioned access for AI agents.
+- **Actions:** Calling a paid tool, granting payment allowances.
+- **Identity:** The protocol's on-chain **Identity Provider** facilitates this. Service developers integrate with it to support two flows:
+  - **API Keys:** For programmatic agents to make authenticated requests.
+  - **OAuth 2.1:** For human users to have a familiar, secure login experience.
 
-This creates a clear separation: native on-chain identity governs the protocol, while the standards-based OAuth provider secures the services running on top of it.
+This creates a clear separation: native on-chain identity governs the protocol, while the flexible Identity Provider secures the services running on top of it.
 
 This diagram shows a more detailed view of how the core services communicate with each other:
 
