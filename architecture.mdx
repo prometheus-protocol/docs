@@ -1,9 +1,11 @@
 ---
 title: 'System Architecture'
-description: 'A high-level overview of the components and services that make up the Prometheus Protocol.'
+description: "How Prometheus's on-chain architecture provides the trust and identity layers for an open 'Web of Agents'."
 ---
 
-The Prometheus Protocol is a vertically integrated stack where each layer builds upon the last, ensuring a secure and seamless flow from code submission to end-user interaction. This page provides a high-level overview of the core components and how they interact.
+The Prometheus Protocol isn't just a set of tools; it's the technical architecture for an open agent economy. Our vertically integrated stack is **intentionally designed** to solve the core problems of trust and centralization, ensuring a secure and seamless flow from code submission to end-user interaction.
+
+This page provides a high-level overview of the components that make the **"Web of Agents"** possible.
 
 ![Protocol Architecture](/images/protocol-architecture.png)
 
@@ -12,12 +14,12 @@ The Prometheus Protocol is a vertically integrated stack where each layer builds
 The protocol is composed of several key on-chain services working in concert to provide the pillars of identity, trust, and payments.
 
 <CardGroup cols={1}>
-  <Card title="The Identity Provider" icon="key" href="#">
+  <Card title="The Identity Provider" icon="key">
     An on-chain service that issues and validates credentials. It provides both
     API Keys for programmatic clients and OAuth 2.1 tokens for interactive user
     sessions.
   </Card>
-  <Card title="The Trust & Deployment Hub" icon="shield-check" href="#">
+  <Card title="The Trust & Deployment Hub" icon="shield-check">
     The core of the trust layer. It manages the service registry, the audit and
     bounty lifecycle, and the secure deployment pipeline that takes verified
     code and deploys it to the mainnet.
@@ -35,7 +37,7 @@ A critical concept in the Prometheus architecture is the distinction between two
 
 #### 1. Protocol Participants (The "Supply Side")
 
-Developers and auditors interact directly with the protocol's core services to perform supply-chain functions.
+Developers and auditors interact directly with the protocol's core services to perform supply-chain functions. This on-chain, verifiable process is our answer to the need for an **"intentional design"** for the agent economy. It builds the foundation of trust necessary for an open ecosystem to thrive.
 
 - **Actions:** Publishing code, claiming bounties, submitting audit results.
 - **Identity & Tools:** These actions are authorized using the blockchain's native identity system (principals). However, the tools used differ by role:
@@ -46,14 +48,14 @@ This ensures that every critical action affecting the software supply chain is c
 
 #### 2. End-Users & Agents (The "Demand Side")
 
-When an end-user or an AI agent wants to use a service from the App Store, they need a more user-friendly and standards-based way to authenticate. This is the role of the **Identity Provider**.
+When an end-user or an AI agent wants to use a service from the App Store, they need a more user-friendly and standards-based way to authenticate. This flexible, standards-based identity is the key to unlocking an open **"Web of Agents."** Unlike the locked-in identities of **"walled gardens,"** our Identity Provider acts as a universal passport, allowing any user or agent to securely interact with any service on the network.
 
 - **Actions:** Calling a paid tool, granting payment allowances.
 - **Identity:** The protocol's on-chain **Identity Provider** facilitates this. Service developers integrate with it to support two flows:
   - **API Keys:** For programmatic agents to make authenticated requests.
   - **OAuth 2.1:** For human users to have a familiar, secure login experience.
 
-This creates a clear separation: native on-chain identity governs the protocol, while the flexible Identity Provider secures the services running on top of it.
+This creates a powerful separation: native on-chain identity forges the protocol's trusted foundation, while the flexible Identity Provider unlocks the open market that runs on top of it.
 
 This diagram shows a more detailed view of how the core services communicate with each other:
 
