@@ -25,7 +25,7 @@ The entire verification process is anchored to a specific Git commit. This ensur
 git rev-parse HEAD
 ```
 
-Copy this hash; you'll need it in a moment.
+Copy this hash; you'll need it for your manifest file.
 
 ### Step 2: Find Your WASM Path
 
@@ -35,29 +35,50 @@ The publishing tool needs to know where your compiled canister WASM is located s
 .dfx/local/canisters/<canister_name>/<canister_name>.wasm
 ```
 
-For example, if your canister is named `my_mcp_server`, the path would be `.dfx/local/canisters/my_mcp_server/my_mcp_server.wasm`.
+For example, if your canister is named `the_weather_oracle`, the path would be `.dfx/local/canisters/the_weather_oracle/the_weather_oracle.wasm`.
 
-### Step 3: Initialize the App Store Configuration
+### Step 3: Host Your App's Visual Assets
+
+Your app's icon and banner need to be accessible via public URLs to be displayed in the App Store. The easiest and most professional way to host these is by using **GitHub Releases**.
+
+1.  **Navigate to Releases:** In your GitHub repository, click on the **"Releases"** tab on the right-hand side.
+2.  **Draft a New Release:** Click the **"Draft a new release"** button.
+3.  **Create a Tag:** In the "Choose a tag" box, type a new tag for your assets (e.g., `v1.0.0-assets`) and click "Create new tag". Give it a title like "App Store Assets".
+4.  **Upload Images:** Drag and drop your `icon.png` and `banner.png` files into the attachments box.
+5.  **Publish Release:** Click the **"Publish release"** button.
+6.  **Copy URLs:** On the release page, your images will be listed as assets. **Right-click** on each asset's filename and select **"Copy Link Address"**. These are the permanent, public URLs you'll need for your manifest.
+
+### Step 4: Initialize and Configure Your Manifest
 
 The `app-store` CLI needs a configuration file to know what to submit. If you haven't already, initialize it.
 
 ```bash
+# Using the npm script
 npm run app-store init
+
+# Direct CLI command
+npx @prometheus-protocol/app-store-cli init
 ```
 
-This command creates a `prometheus.yml` file in your project root. Open this file and fill in the details about your service, such as its name and description.
+This command creates a `prometheus.yml` file in your project root. Open this file and fill in all the details about your service, including:
 
-### Step 4: Publish Your Service
+- The **`git_commit`** hash from Step 1.
+- The **`wasm_path`** from Step 2.
+- The public **`icon_url`** and **`banner_url`** you created in Step 3.
 
-Now, publish your service to the protocol. This single command bundles your code's proof (the commit hash and WASM hash), WASM, and your metadata, and submits it to the Audit Hub.
+### Step 5: Publish Your Service
+
+Now, publish your service to the protocol. This single command bundles your code's proof (the commit hash and WASM hash), your WASM file, and your metadata, and submits it to the Audit Hub.
 
 ```bash
-npm run app-store publish "0.1.0"
+# Using the npm script (replace "1.0.0" with your version)
+npm run app-store publish "1.0.0"
+
+# Direct CLI command (replace "1.0.0" with your version)
+npx @prometheus-protocol/app-store-cli publish "1.0.0"
 ```
 
-Replace `"0.1.0"` with your service's version number.
-
-### Step 5: Monitor the Verification Status
+### Step 6: Monitor the Verification Status
 
 Once you've published, your submission enters the audit queue. You can track its progress on the Prometheus Audit Hub.
 
@@ -65,7 +86,7 @@ Once you've published, your submission enters the audit queue. You can track its
 2.  Click on the **"Pending Verifications"** tab.
 3.  Find your service by its WASM hash.
 
-Once complete, your MCP server will appear on the home page.
+Once the build verification is complete, your MCP server will be deployed and will appear on the App Store home page.
 
 #### Speeding Up the Review
 
