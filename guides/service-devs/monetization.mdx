@@ -40,7 +40,7 @@ Open the `src/main.mo` file in your editor. You will need to uncomment three sec
         // ...
         payment = ?{
           amount = 100_000; // The cost to call this tool
-          ledger = Ledger.ICRC1(icrc1Ledger); // The token ledger to use
+          ledger = Principal.fromText("icrc1_ledger_canister_id"); // The token ledger to use
         };
       },
       // ...
@@ -55,7 +55,7 @@ Open the `src/main.mo` file in your editor. You will need to uncomment three sec
     ```ts src/main.mo
     let mcpConfig : MCP.Config = {
       // ...
-      allowanceUrl = ?"https://prometheusprotocol.org/connections";
+      allowanceUrl = ?"https://prometheusprotocol.org/app/your_app_namespace";
     };
     ```
 
@@ -68,7 +68,7 @@ Open the `src/main.mo` file in your editor. You will need to uncomment three sec
     // URL of the Prometheus OAuth 2.1 provider
     let issuerUrl = "https://bfggx-7yaaa-aaaai-q32gq-cai.icp0.io";
 
-    // URL of your service's frontend (for interactive login redirects)
+    // URL of the OAuth flow (should be same frontend that manages allowances)
     let frontendUrl = "https://prometheusprotocol.org/oauth";
 
     // The scopes your service requires. "openid" is always required.
@@ -87,6 +87,7 @@ Open the `src/main.mo` file in your editor. You will need to uncomment three sec
     // Initialize the auth context with the issuer URL and required scopes.
     transient let authContext : ?AuthTypes.AuthContext = ?AuthState.init(
       Principal.fromActor(self),
+      owner,
       issuerUrl,
       requiredScopes,
       transformJwksResponse,
@@ -115,7 +116,7 @@ With the authentication context active, your service can now issue and validate 
 Run the following command, replacing `<your_canister_id>` with the ID from the `npm run deploy` output.
 
 ```bash
-dfx canister call <your_canister_id> create_api_key '("My Test Key")'
+dfx canister call <your_canister_id> create_my_api_key '("My Test Key", vec {})'
 ```
 
 The command will return your new API key.
@@ -137,20 +138,6 @@ You can now use this key to call a protected tool. The key must be passed in via
 
 </Step>
 </Steps>
-
----
-
-### Optional: Enable Interactive Login for Web Apps
-
-While API keys are ideal for scripts and backend services, you may also want to allow human users to log in through a browser-based flow (e.g., from the Prometheus App Store). To enable this, you must register your service as an OAuth client.
-
-Your project includes a built-in script to handle this. Run the following command:
-
-```bash
-npm run auth register
-```
-
-This command will interactively guide you through the registration process. Once complete, users will be able to log into your service using their standard Prometheus identity and wallets.
 
 ---
 

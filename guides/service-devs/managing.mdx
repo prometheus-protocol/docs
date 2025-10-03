@@ -64,20 +64,19 @@ Enabling the beacon requires a code change. Because the Prometheus Protocol mana
 
     ```ts src/main.mo
     // --- OPT-IN: USAGE ANALYTICS (BEACON) ---
-    let beaconContext = Beacon.init({
-      // The Prometheus beacon canister ID
-      beacon_canister = principal "g6mnv-haaaa-aaaai-q32wq-cai";
-      // The interval between pings
-      interval = 24 * 3_600_000_000_000; // 24 hours in nanoseconds
-    });
+    let beaconCanisterId = Principal.fromText("vt46d-j7777-77774-qaagq-cai");
+    transient let beaconContext : Beacon.BeaconContext = Beacon.init(
+      beaconCanisterId, // Public beacon canister ID
+      ?(15 * 60), // Send a beacon every 15 minutes (more frequent = more cycles cost)
+    );
     ```
 
   </Step>
   <Step title="Commit the Changes">
-    Save the file and commit the update to your Git repository. The publishing process is tied to your commit history.
+    Save the file, build the new wasm (e.g., `dfx deploy`), and commit the update to your Git repository. The publishing process is tied to your commit history.
 
     ```bash
-    git add src/main.mo
+    git add .
     git commit -m "feat: enable usage beacon"
     ```
 
