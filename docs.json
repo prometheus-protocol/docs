@@ -62,7 +62,9 @@
               "guides/service-devs/quickstart",
               "guides/service-devs/publishing",
               "guides/service-devs/monetization",
-              "guides/service-devs/managing"
+              "guides/service-devs/managing",
+              "guides/service-devs/wrapper-pattern",
+              "guides/service-devs/multi-tenant-pattern"
             ]
           },
           {
