@@ -1,0 +1,239 @@
+---
+title: 'Resources'
+description: 'Example MCP servers and useful resources for building on Prometheus Protocol'
+---
+
+## Example MCP Servers
+
+### ArcSwap - DEX Wrapper
+
+A wrapper MCP server that orchestrates token swaps on KongSwap DEX.
+
+- **Repository:** [github.com/jneums/arcswap](https://github.com/jneums/arcswap)
+- **Pattern:** Wrapper Pattern
+- **Features:** Multi-step swap orchestration, ICRC-2 allowances, identity management
+- **Use Case:** DeFi, Token Swaps
+
+### Synapse Fund - Portfolio Management
+
+An MCP server for AI-powered portfolio management and DeFi interactions.
+
+- **Repository:** [github.com/jneums/synapse-fund](https://github.com/jneums/synapse-fund)
+- **Pattern:** Wrapper Pattern
+- **Features:** Portfolio tracking, automated rebalancing, DeFi protocol integration
+- **Use Case:** Investment Management, DeFi
+
+### TaskPad - Multi-Tenant Todo List
+
+A simple multi-tenant todo list MCP server demonstrating principal-based data segregation.
+
+- **Repository:** [github.com/jneums/taskpad](https://github.com/jneums/taskpad)
+- **Pattern:** Multi-Tenant Pattern
+- **Features:** Personal todo lists with isolated storage per user
+- **Use Case:** Productivity, Task Management
+
+### Easy Wallet - ICRC Token Wallet
+
+A stateless, non-custodial wallet MCP server for querying balances and executing transfers.
+
+- **Repository:** [github.com/jneums/easy-wallet](https://github.com/jneums/easy-wallet)
+- **Pattern:** Stateless Proxy (no identity needed)
+- **Features:** ICRC-1 balance queries, ICRC-2 transfers via allowances, no custody
+- **Use Case:** Token Management, DeFi Integration
+
+---
+
+## Development Tools
+
+### MCP Motoko SDK
+
+The official Motoko SDK for building MCP servers on the Internet Computer.
+
+- **Repository:** [github.com/prometheusprotocol/mcp-motoko-sdk](https://github.com/prometheusprotocol/mcp-motoko-sdk)
+- **Documentation:** [SDK Documentation](./sdk-libraries)
+- **Features:**
+  - MCP protocol implementation
+  - Authentication (API keys, OAuth)
+  - HTTP handlers
+  - Tool registration
+  - Resource management
+
+### MCP Inspector
+
+Debug and test your MCP servers with the official inspector tool.
+
+- **Repository:** [github.com/modelcontextprotocol/inspector](https://github.com/modelcontextprotocol/inspector)
+- **Features:**
+  - Interactive tool testing
+  - Resource browsing
+  - Request/response inspection
+  - Local and remote server support
+
+### Prometheus CLI
+
+Command-line interface for deploying and managing MCP servers.
+
+- **Repository:** [github.com/prometheus-protocol/prometheus-cli](https://github.com/prometheus-protocol/prometheus-cli)
+- **Documentation:** [CLI Commands](./cli-commands)
+- **Features:**
+  - Deploy to mainnet
+  - Submit to app store
+  - Manage API keys
+  - Monitor usage
+
+---
+
+## Standards & Protocols
+
+### ICRC Standards
+
+Token standards used in Internet Computer MCP servers.
+
+- **ICRC-1:** [Fungible Token Standard](https://github.com/dfinity/ICRC-1)
+- **ICRC-2:** [Approve and Transfer From](https://github.com/dfinity/ICRC-1/tree/main/standards/ICRC-2)
+- **ICRC-21:** [Canister Call Consent Messages](https://github.com/dfinity/ICRC/blob/main/ICRCs/ICRC-21/ICRC-21.md)
+- **Documentation:** [ICRC Standards Reference](./icrc-standards)
+
+### Model Context Protocol (MCP)
+
+The protocol specification that Prometheus implements.
+
+- **Repository:** [github.com/modelcontextprotocol/specification](https://github.com/modelcontextprotocol/specification)
+- **Website:** [modelcontextprotocol.io](https://modelcontextprotocol.io)
+- **Features:**
+  - Tool definitions (JSON-RPC)
+  - Resource management
+  - Prompt templates
+  - Server discovery
+
+---
+
+## Learning Resources
+
+### Tutorials & Guides
+
+- **[Wrapper Pattern Guide](../guides/service-devs/wrapper-pattern)** - Build orchestration layers for complex workflows
+- **[Multi-Tenant Pattern Guide](../guides/service-devs/multi-tenant-pattern)** - Create shared services with data isolation
+- **[Quickstart Guide](../guides/service-devs/quickstart)** - Get started in 5 minutes
+
+### Internet Computer Documentation
+
+- **[Motoko Language Guide](https://internetcomputer.org/docs/current/motoko/main/motoko)** - Learn the Motoko programming language
+- **[Canister Development](https://internetcomputer.org/docs/current/developer-docs/backend/motoko/)** - Build smart contracts
+- **[Authentication & Identity](https://internetcomputer.org/docs/current/developer-docs/identity/authentication/)** - User authentication patterns
+- **[HTTP Gateway](https://internetcomputer.org/docs/current/developer-docs/http-compatible-canisters/custom-http-canisters)** - Serve HTTP from canisters
+
+### Video Tutorials
+
+- **Prometheus Protocol YouTube Channel** - Coming Soon
+- **DFINITY Developer Videos** - [youtube.com/@DFINITY](https://youtube.com/@DFINITY)
+
+---
+
+## Package Managers & Libraries
+
+### MOPS - Motoko Package Manager
+
+Install and manage Motoko dependencies.
+
+- **Website:** [mops.one](https://mops.one)
+- **Documentation:** [MOPS Documentation](https://docs.mops.one)
+- **Popular Packages:**
+  - `map` - Efficient key-value storage
+  - `json` - JSON parsing and serialization
+  - `mcp-motoko-sdk` - MCP server framework
+
+### Vessel (Alternative)
+
+Community-driven Motoko package manager.
+
+- **Repository:** [github.com/dfinity/vessel](https://github.com/dfinity/vessel)
+- **Package Set:** [github.com/dfinity/vessel-package-set](https://github.com/dfinity/vessel-package-set)
+
+---
+
+## AI Agent Integrations
+
+### Claude Desktop
+
+Use MCP servers with Claude Desktop application.
+
+- **Guide:** [AI Tools - Claude](../ai-tools/claude-code)
+- **Download:** [claude.ai/download](https://claude.ai/download)
+
+### Cursor IDE
+
+AI-powered code editor with MCP support.
+
+- **Guide:** [AI Tools - Cursor](../ai-tools/cursor)
+- **Website:** [cursor.sh](https://cursor.sh)
+
+### Windsurf IDE
+
+AI development environment with MCP integration.
+
+- **Guide:** [AI Tools - Windsurf](../ai-tools/windsurf)
+- **Website:** [codeium.com/windsurf](https://codeium.com/windsurf)
+
+---
+
+## Sample Code Repositories
+
+### Authentication Examples
+
+- **API Key Authentication** - [See ArcSwap](https://github.com/jneums/arcswap)
+- **OAuth Integration** - Coming Soon
+
+### Token Operations
+
+- **ICRC-2 Transfer From** - [See ArcSwap swap tool](https://github.com/jneums/arcswap/blob/main/src/tools/dex_swap_submit.mo)
+- **Approval Management** - [See ArcSwap](https://github.com/jneums/arcswap)
+
+### Multi-Tenant Storage
+
+- **Principal-Based Maps** - See [Multi-Tenant Guide](../guides/service-devs/multi-tenant-pattern)
+- **Quota Management** - Coming Soon
+
+---
+
+## Community & Support
+
+### Discord
+
+Join the Prometheus Protocol community for help and discussion.
+
+- **Link:** [discord.gg/TbqgYERjYw](https://discord.gg/TbqgYERjYw)
+- **Channels:**
+  - `#general` - General discussion
+  - `#dev-help` - Development questions
+  - `#showcase` - Show off your MCP servers
+  - `#feedback` - Feature requests and bug reports
+
+### DFINITY Forum
+
+Get help with Internet Computer development.
+
+- **Link:** [forum.dfinity.org](https://forum.dfinity.org)
+- **Topics:** Motoko, Canisters, Authentication, Storage
+
+### Social Media
+
+- **X (Twitter):** [@Prometheus9486](https://x.com/Prometheus9486)
+- **GitHub:** [github.com/prometheus-protocol](https://github.com/prometheus-protocol)
+
+---
+
+## Contributing
+
+Want to add your MCP server to this list? Submit a pull request!
+
+1. Fork the [docs repository](https://github.com/prometheus-protocol/docs)
+2. Add your project to this page
+3. Include: name, repo link, pattern used, features, and use case
+4. Submit a PR
+
+---
+
+## License & Legal
+
+Most resources are open source under MIT or Apache 2.0 licenses. Check individual repositories for specific licensing terms.

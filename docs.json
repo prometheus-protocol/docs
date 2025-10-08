@@ -95,7 +95,8 @@
           "reference/cli-commands",
           "reference/sdk-libraries",
           "reference/icrc-standards",
-          "reference/canister-ids"
+          "reference/canister-ids",
+          "reference/mcp-resources"
         ]
       }
     ]
