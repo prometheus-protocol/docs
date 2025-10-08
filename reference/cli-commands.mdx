@@ -43,15 +43,7 @@ Commands for managing the application lifecycle from within your project.
 Initializes a new `prometheus.yml` configuration file in the current directory. This file contains the metadata for your service.
 
 ```bash
-npm run app-store init
-```
-
-#### `submit`
-
-Submits your service's WASM hash and metadata for verification based on your `prometheus.yml` config. This creates an entry in the App Store and opens it up for auditing.
-
-```bash
-npm run app-store submit
+npm run app-store init -y
 ```
 
 #### `status`
@@ -67,7 +59,7 @@ npm run app-store status
 Publishes a new, verified version of your application to the App Store, making it visible to end-users.
 
 ```bash
-npm run app-store -- publish --app-version "1.0.0"
+npm run app-store publish 1.0.0
 ```
 
 ---
