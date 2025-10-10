@@ -40,7 +40,7 @@
           "href": "https://prometheusprotocol.org"
         },
         {
-          "anchor": "Roadmap",
+          "anchor": "GitHub",
           "icon": "github",
           "href": "https://github.com/prometheus-protocol/prometheus-protocol"
         }
@@ -116,16 +116,7 @@
   },
 
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
+    "options": ["copy", "view"]
   },
   "footer": {
     "socials": {

@@ -5,35 +5,3 @@
 .almond-layout {
   padding-right: 0 !important;
 }
-
-/* Improve ASCII diagram rendering */
-pre code {
-  font-family:
-    'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono',
-    'Source Code Pro', monospace !important;
-  font-size: 0.8rem !important;
-  line-height: 1.4 !important;
-  letter-spacing: 0 !important;
-  font-variant-ligatures: none !important;
-  font-feature-settings: normal !important;
-  text-rendering: geometricPrecision !important;
-}
-
-/* Better contrast for diagrams */
-pre {
-  background-color: #0d1117 !important;
-  border: 1px solid #30363d !important;
-  border-radius: 6px !important;
-  padding: 1.5rem !important;
-  overflow-x: auto !important;
-  tab-size: 4 !important;
-}
-
-/* Make sure code blocks don't break the layout */
-pre,
-pre code {
-  white-space: pre !important;
-  word-wrap: normal !important;
-  overflow-x: auto !important;
-  word-spacing: normal !important;
-}
