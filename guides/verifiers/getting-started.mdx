@@ -1,0 +1,340 @@
+---
+title: 'Getting Started as a Verifier'
+description: 'Step-by-step guide to setting up your verifier bot and earning token rewards.'
+---
+
+This guide will walk you through everything you need to start earning token rewards by running a verifier bot. The entire setup process takes about 15-30 minutes.
+
+## Prerequisites
+
+Before you begin, you'll need:
+
+- A VPS or cloud instance (2 CPU, 4GB RAM minimum) - $5-10/month
+  - Recommended: DigitalOcean, Linode, AWS EC2, or any Linux VPS
+- Docker installed on your server
+- 10-20 USDC for initial stake pool
+- Internet Identity for dashboard authentication
+
+## Step 1: Set Up Your Verifier Dashboard Account
+
+### 1.1 Create Your Account
+
+1. Visit **[prometheusprotocol.org/verifiers](https://prometheusprotocol.org/verifiers)**
+2. Click the **"Login"** button and log in with Internet Identity
+3. Complete the verifier onboarding flow
+
+### 1.2 Deposit Your Initial Stake
+
+Your stake pool is used as collateral for reserving bounties. We recommend starting with 10-20 USDC:
+
+1. In the dashboard, click **"Deposit Stake"**
+2. Enter the amount (e.g., 10 USDC)
+3. Confirm the deposit transaction
+
+The deposit is processed automatically—no manual approvals needed.
+
+**How much to stake?**
+- **10 USDC** = ~30 concurrent verifications (beginner)
+- **20 USDC** = ~60 concurrent verifications (active)
+- **50+ USDC** = 150+ concurrent verifications (professional)
+
+Each verification requires 0.30 USDC collateral, which is returned upon completion.
+
+### 1.3 Generate API Credentials
+
+Your bot will use API credentials to interact with the protocol:
+
+1. In the dashboard, navigate to **"API Credentials"**
+2. Click **"Generate New API Key"**
+3. Give it a descriptive name (e.g., "Production Bot 1")
+4. **Copy and save the API key securely** - it won't be shown again
+
+**Why use separate API keys?**
+- **Selective revocation:** If a bot is compromised, revoke only that specific key without affecting other bots
+- **Per-key metrics:** Monitor performance and earnings separately for each bot (coming soon)
+- **Multi-bot management:** Run bots on different servers with isolated credentials
+
+**Security Note:** API keys can reserve bounties and submit attestations, but cannot withdraw funds without WebAuthn confirmation in the dashboard.
+
+## Step 2: Set Up Your Server
+
+### 2.1 Install Docker
+
+If Docker isn't already installed on your VPS:
+
+```bash
+# For Ubuntu/Debian
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+# Log out and back in for group changes to take effect
+
+# Verify installation
+docker --version
+docker-compose --version
+```
+
+### 2.2 Clone the Verifier Bot Repository
+
+```bash
+# Clone the Prometheus Protocol repository
+git clone https://github.com/prometheus-protocol/prometheus-protocol.git
+cd prometheus-protocol/packages/apps/verifier-bot
+```
+
+**Alternative: Use the Public Docker Image**
+
+If you prefer not to build from source, you can use the pre-built public Docker image:
+
+```bash
+# Pull the latest verifier bot image
+docker pull ghcr.io/prometheus-protocol/verifier-bot:latest
+
+# Run directly with environment variables
+docker run -d \
+  --name verifier-bot \
+  -e API_KEY=your_api_key_here \
+  -e NETWORK=ic \
+  ghcr.io/prometheus-protocol/verifier-bot:latest
+```
+
+This image is automatically built and published from the main repository.
+
+### 2.3 Configure Environment Variables
+
+Create your `.env` file with your API credentials:
+
+```bash
+cd deployment
+cp .env.example .env
+nano .env  # or use your preferred editor
+```
+
+Edit the `.env` file and set:
+
+```bash
+# Your API key from the dashboard
+API_KEY=your_api_key_here
+
+# Network configuration (local for testing, ic for production)
+NETWORK=ic
+
+# Optional: GitHub token for private repos (if needed)
+GITHUB_TOKEN=your_github_token_here
+```
+
+**Save and close the file.**
+
+## Step 3: Build and Run Your Verifier Bot
+
+### 3.1 Build Docker Images
+
+First, build the base Docker images for reproducible builds:
+
+```bash
+# From the deployment directory
+docker-compose build --no-cache
+```
+
+This builds the deterministic Docker environment that will be used for all verifications.
+
+### 3.2 Start Your Verifier Bot
+
+```bash
+docker-compose up -d
+```
+
+**What this does:**
+
+- Starts your verifier bot in the background (daemon mode)
+- Bot begins polling for pending verifications every 60 seconds
+- Automatically reserves bounties, performs builds, and claims rewards
+
+### 3.3 Monitor Your Bot
+
+Check that your bot is running correctly:
+
+```bash
+# View logs in real-time
+docker-compose logs -f
+
+# Check running containers
+docker ps
+
+# View recent logs
+docker-compose logs --tail=100
+```
+
+You should see output like:
+
+```
+verifier-bot | Found 3 pending verification(s)
+verifier-bot | Reserving bounty 12345...
+verifier-bot | Building WASM from https://github.com/example/repo.git @ abc123...
+verifier-bot | Build completed in 8.3 seconds
+verifier-bot | Hash match: ✅ 0x1234abcd...
+verifier-bot | Filing attestation...
+verifier-bot | Claiming bounty...
+verifier-bot | ✅ Reward transferred to verifier
+```
+
+## Step 4: Monitor Your Earnings
+
+### 4.1 Dashboard Overview
+
+Return to the **Verifier Dashboard** to monitor your operations:
+
+**Real-time Metrics:**
+
+- Total verifications completed
+- Active stakes and locks
+- Earned rewards (available for withdrawal)
+- Performance metrics and uptime
+- Recent verification history
+
+### 4.2 Withdraw Earnings
+
+When you're ready to withdraw your earnings:
+
+1. In the dashboard, navigate to **"Earnings"**
+2. Click **"Withdraw"**
+3. Enter the amount you want to withdraw
+4. Confirm with WebAuthn
+5. USDC is transferred to your wallet
+
+**Note:** You can withdraw anytime. Withdrawn funds are immediately available in your wallet.
+
+## Step 5: Scaling Your Operation
+
+### 5.1 Running Multiple Bots
+
+To increase throughput, you can run multiple bots on different servers:
+
+1. Set up additional VPS instances
+2. Follow steps 2-3 for each instance
+3. Use the **same API key** - all bots share your dashboard stake pool
+4. Monitor all bots from one centralized dashboard
+
+### 5.2 Optimizing Performance
+
+**Tips for maximizing earnings:**
+
+- Use SSD storage for faster git clones and builds
+- Place VPS in regions close to GitHub servers (US-East, EU-West)
+- Monitor the dashboard for peak verification times
+- Add more stake during high-demand periods
+- Keep Docker images up to date
+
+### 5.3 Auto-Restart on Failure
+
+Configure automatic restarts if your bot crashes:
+
+```bash
+# Edit docker-compose.yml and add:
+restart: unless-stopped
+
+# Then restart:
+docker-compose down
+docker-compose up -d
+```
+
+## Troubleshooting
+
+### Bot Not Finding Verifications
+
+**Check:**
+
+- API key is correctly set in `.env`
+- Network is set to `ic` (not `local`)
+- Bot has internet connectivity
+- Docker containers are running: `docker ps`
+
+### Insufficient Stake Errors
+
+**Solution:**
+
+- Check your available stake in the dashboard
+- Deposit more USDC to your stake pool
+- Each verification requires 0.30 USDC collateral
+
+### Build Failures
+
+**Check:**
+
+- Docker has sufficient disk space: `df -h`
+- Docker images are up to date: `docker-compose pull`
+- Logs for specific error messages: `docker-compose logs --tail=500`
+
+### Stake Not Returning
+
+**Possible causes:**
+
+- Verification is still in progress (check dashboard)
+- Network issues prevented claim transaction (bot will retry)
+- 1-hour timeout expired (stake was slashed for abandonment)
+
+**Fix:**
+
+- Check "Active Stakes" in dashboard for details
+- Ensure bot is running and connected
+- Contact support if stake appears stuck
+
+## Advanced Configuration
+
+### Custom Polling Interval
+
+Edit `packages/apps/verifier-bot/src/index.ts`:
+
+```typescript
+// Change polling interval (default: 60 seconds)
+setInterval(pollAndVerify, 30_000); // 30 seconds
+```
+
+Rebuild and restart:
+
+```bash
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Monitoring with External Tools
+
+Set up Prometheus/Grafana monitoring:
+
+1. Export metrics from your bot
+2. Configure Prometheus to scrape metrics
+3. Create Grafana dashboards for:
+   - Verifications per hour
+   - Success rate
+   - Earnings over time
+   - Stake utilization
+
+## Security Best Practices
+
+<Card title="Protect Your API Key" icon="lock">
+  - Never commit `.env` files to git - Use separate API keys for testing and
+  production - Rotate API keys periodically - Revoke compromised keys
+  immediately in the dashboard
+</Card>
+
+<Card title="Server Security" icon="shield">
+  - Keep your VPS updated: `sudo apt update && sudo apt upgrade` - Use SSH keys
+  instead of passwords - Configure firewall rules (only necessary ports open) -
+  Enable automatic security updates
+</Card>
+
+<Card title="Monitor Regularly" icon="chart-line">
+  - Check dashboard daily for anomalies - Set up alerts for failed verifications
+  - Review bot logs weekly - Monitor stake utilization
+</Card>
+
+## Getting Help
+
+- **Documentation:** [docs.prometheusprotocol.org](https://docs.prometheusprotocol.org)
+- **Discord Community:** [discord.gg/TbqgYERjYw](https://discord.gg/TbqgYERjYw)
+- **GitHub Issues:** [github.com/prometheus-protocol/prometheus-protocol](https://github.com/prometheus-protocol/prometheus-protocol)
+- **Support Email:** support@prometheusprotocol.org
+
+---
+
+🎉 **Congratulations!** You're now earning passive income by securing the open agent economy. Your bot will continue verifying builds automatically while you monitor earnings in the dashboard.

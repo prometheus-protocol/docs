@@ -1,41 +1,56 @@
 ---
 title: 'Publishing'
-description: 'Submit your service for a decentralized audit and get it deployed to mainnet.'
+description: 'Submit your service for automated reproducible build verification and deployment to mainnet.'
 ---
 
-Once your service is built and tested, the final step is to publish it. This makes it discoverable in the Prometheus App Store and signals its quality to the world.
+Once your service is built and tested, the final step is to publish it. This makes it discoverable in the Prometheus App Store and automatically triggers the decentralized verification process.
 
-This guide will walk you through using the `app-store` CLI to get your service verified and deployed on the main network.
+This guide will walk you through using the `app-store-cli` to get your service verified and deployed on the main network.
 
-### The Verification Process
+### The Automated Verification Process
 
-Publishing is a formal, on-chain process that gets your code from your machine to a live mainnet canister.
+Publishing triggers a fully automated workflow that gets your code from your machine to a live mainnet canister with cryptographic proof of integrity:
 
-1.  **Publish:** You submit your service's Git commit hash and metadata to the protocol.
-2.  **Build & Verify:** The protocol's automated system checks out your code, builds the WASM file, and verifies that its hash matches the one produced on your machine. This proves the source code is what you claim it is.
-3.  **Deploy:** Once the build verification passes, the protocol automatically creates a new canister on your behalf and deploys the verified WASM to the main network.
-4.  **Audits:** Independent auditors review your source code for quality and security. You can add bounties to incentivize faster reviews.
+1.  **Publish:** You submit your service's Git commit hash and metadata to the protocol using `app-store-cli release`.
+2.  **Bounty Creation:** The protocol automatically creates verification bounties (~$2.25 per version) to incentivize independent verifiers.
+3.  **Automated Build Verification:** Multiple independent verifier bots detect your submission, clone your repository, rebuild your WASM in deterministic Docker environments, and compare hashes.
+4.  **Consensus:** The system requires 5 of 9 independent verifiers to agree on the same WASM hash for verification to succeed.
+5.  **Attestations:** Verifiers file cryptographic attestations on-chain (ICRC-126) and claim their bounty rewards (ICRC-127).
+6.  **Deploy:** Once verified, the protocol automatically creates a new canister on your behalf and deploys the verified WASM to the main network.
+7.  **Security Audits (Optional):** You can add additional bounties to incentivize security auditors to review your code for vulnerabilities, earning higher certificate tiers (Gold, Silver, Bronze).
 
-### Step 1: Get Your Git Commit Hash
+The entire process from publishing to verification typically completes in **1-5 minutes** with zero human intervention.
 
-The entire verification process is anchored to a specific Git commit. This ensures that the code being audited is exactly the code you intended to publish. Make sure all your changes are committed.
+### Step 1: Ensure Your Code is Committed
+
+The verification process is anchored to a specific Git commit. Make sure all your changes are committed and pushed to GitHub:
 
 ```bash
-# This command gets the hash of your latest commit
-git rev-parse HEAD
+git add .
+git commit -m "Ready for publishing"
+git push
 ```
 
-Copy this hash; you'll need it for your manifest file.
+The `app-store-cli release` command will automatically capture your commit hash and update your `prometheus.yml` file.
 
-### Step 2: Find Your WASM Path
+### Step 2: Configure Your Manifest (One Time Setup)
 
-The publishing tool needs to know where your compiled canister WASM is located so it can hash it for verification. After running a local deploy (`npm run deploy`), you can find it at this path:
+If you haven't already, initialize your `prometheus.yml` configuration file:
 
+```bash
+# Using the npm script
+npm run app-store init -y
+
+# Direct CLI command
+npx @prometheus-protocol/app-store-cli init -y
 ```
-.dfx/local/canisters/<canister_name>/<canister_name>.wasm
-```
 
-For example, if your canister is named `the_weather_oracle`, the path would be `.dfx/local/canisters/the_weather_oracle/the_weather_oracle.wasm`.
+Open the generated `prometheus.yml` file and configure:
+
+- Your service metadata (name, description, category)
+- Public **`icon_url`** and **`banner_url`** for the App Store listing (see below for hosting tips)
+
+**Note:** The `git_commit` and `wasm_path` fields will be automatically updated by the `release` command, so you don't need to manually set them.
 
 ### Step 3: Host Your App's Visual Assets
 
@@ -46,54 +61,73 @@ Your app's icon and banner need to be accessible via public URLs to be displayed
 3.  **Create a Tag:** In the "Choose a tag" box, type a new tag for your assets (e.g., `v1.0.0-assets`) and click "Create new tag". Give it a title like "App Store Assets".
 4.  **Upload Images:** Drag and drop your `icon.png` and `banner.png` files into the attachments box.
 5.  **Publish Release:** Click the **"Publish release"** button.
-6.  **Copy URLs:** On the release page, your images will be listed as assets. **Right-click** on each asset's filename and select **"Copy Link Address"**. These are the permanent, public URLs you'll need for your manifest.
+6.  **Copy URLs:** On the release page, your images will be listed as assets. **Right-click** on each asset's filename and select **"Copy Link Address"**. These are the permanent, public URLs you'll need for your `prometheus.yml` manifest.
 
-### Step 4: Initialize and Configure Your Manifest
+### Step 4: Publish Your Service (One Command)
 
-The `app-store` CLI needs a configuration file to know what to submit. If you haven't already, initialize it.
-
-```bash
-# Using the npm script
-npm run app-store init -y
-
-# Direct CLI command
-npx @prometheus-protocol/app-store-cli init -y
-```
-
-This command creates a `prometheus.yml` file in your project root. Open this file and fill in all the details about your service, including:
-
-- The **`git_commit`** hash from Step 1.
-- The **`wasm_path`** from Step 2.
-- The public **`icon_url`** and **`banner_url`** you created in Step 3.
-
-### Step 5: Publish Your Service
-
-Now, publish your service to the protocol. This single command bundles your code's proof (the commit hash and WASM hash), your WASM file, and your metadata, and submits it to the Audit Hub.
+Now you're ready to publish! The `release` command handles everything automatically:
 
 ```bash
 # Using the npm script (replace "1.0.0" with your version)
-npm run app-store publish "1.0.0"
+npm run app-store release "1.0.0"
 
 # Direct CLI command (replace "1.0.0" with your version)
-npx @prometheus-protocol/app-store-cli publish "1.0.0"
+npx @prometheus-protocol/app-store-cli release "1.0.0"
 ```
 
-### Step 6: Monitor the Verification Status
+**What this command does automatically:**
 
-Once you've published, your submission enters the audit queue. You can track its progress on the Prometheus Audit Hub.
+1. ✅ Updates the version number in your source code (`src/main.mo`)
+2. ✅ Commits and pushes the version change to GitHub
+3. ✅ Captures the commit hash and updates `prometheus.yml`
+4. ✅ Commits and pushes the `prometheus.yml` update
+5. ✅ Builds your WASM using the reproducible build system
+6. ✅ Publishes to the registry and creates verification bounties
+
+**That's it!** The entire workflow is handled by a single command.
+
+### Step 5: Monitor the Verification Status
+
+Once you've published, your submission automatically triggers the verification network. Multiple independent verifier bots will:
+
+1. Clone your repository at the exact commit hash
+2. Rebuild your WASM in deterministic Docker environments
+3. Compare the built WASM hash with your submitted hash
+4. File cryptographic attestations on-chain
+5. Claim their bounty rewards
+
+You can track this process in real-time:
 
 1.  Go to **[https://prometheusprotocol.org/audit-hub](https://prometheusprotocol.org/audit-hub)**
-2.  Click on the **"Pending Verifications"** tab.
-3.  Find your service by its WASM hash.
+2.  Find your service and view the verification progress
+3.  Watch as verifiers complete their builds and file attestations
 
-Once the build verification is complete, your MCP server will be deployed and will appear on the App Store home page.
+**Consensus typically takes 1-5 minutes.** Once 5 of 9 verifiers agree, your WASM is marked as verified and automatically deployed to mainnet.
 
-#### Speeding Up the Review
+#### Understanding the Verification Process
 
-The audit is performed by other members of the ecosystem. To get your service reviewed faster, you can add a bounty to your submission.
+**Build Verification (Automated):**
 
-- **Add a Bounty:** Use the app store UI to add a bounty to your pending audit, making it more attractive for reviewers.
-- **Request a Bounty:** If you don't want to fund it yourself, you can post in our Discord and ask if another community member is willing to sponsor your review.
+- Free for users to verify (reproducible builds are public infrastructure)
+- ~$2.25 cost per version for bounty rewards to verifiers
+- Proves **integrity**: deployed code matches source code
+- Required for all published services
+
+**Security Audits (Optional):**
+
+- Additional bounties for human security experts
+- Proves **safety**: source code is free from vulnerabilities
+- Required for Gold/Silver/Bronze certificate tiers
+- Can be added after build verification completes
+
+#### Speeding Up Security Audits
+
+If you want to achieve a higher certificate tier (Gold, Silver, or Bronze), you'll need security audits in addition to build verification:
+
+- **Add a Bounty:** Use the app store UI to add security audit bounties to your submission, making it more attractive for human auditors.
+- **Request a Bounty:** If you don't want to fund it yourself, you can post in our Discord and ask if another community member is willing to sponsor your audit.
+
+Build verification happens automatically, but security audits require human review and may take longer.
 
 ---
 

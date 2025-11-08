@@ -46,6 +46,32 @@ Initializes a new `prometheus.yml` configuration file in the current directory. 
 npm run app-store init -y
 ```
 
+#### `release`
+
+**The recommended all-in-one command for publishing.** Automatically handles the entire workflow:
+1. Updates version number in source code
+2. Commits and pushes version change to GitHub
+3. Updates `prometheus.yml` with commit hash and WASM path
+4. Builds WASM using reproducible Docker environment
+5. Publishes to registry and creates verification bounties
+
+```bash
+npm run app-store release 1.0.0
+
+# Advanced options:
+npm run app-store release 1.0.0 --skip-git    # Manual git control
+npm run app-store release 1.0.0 --skip-build  # Use pre-built WASM
+npm run app-store release 1.0.0 --network ic  # Publish to mainnet
+```
+
+#### `build`
+
+Builds your WASM file using the reproducible build system (Docker-based). The `release` command calls this automatically.
+
+```bash
+npm run app-store build
+```
+
 #### `status`
 
 Checks the current verification status of your application (e.g., Pending, Auditing, Verified, Rejected).
@@ -54,9 +80,9 @@ Checks the current verification status of your application (e.g., Pending, Audit
 npm run app-store status
 ```
 
-#### `publish`
+#### `publish` (deprecated)
 
-Publishes a new, verified version of your application to the App Store, making it visible to end-users.
+Legacy command for publishing. **Use `release` instead** for the full automated workflow.
 
 ```bash
 npm run app-store publish 1.0.0
@@ -78,7 +104,7 @@ npx @prometheus-protocol/app-store-cli bounty list
 
 #### `bounty reserve <bounty-id>`
 
-Reserves an open bounty by staking your reputation tokens. This grants you an exclusive lock to perform the audit.
+Reserves an open bounty by staking USDC collateral. This grants you an exclusive lock to perform the audit.
 
 ```bash
 npx @prometheus-protocol/app-store-cli bounty reserve <bounty-id>

@@ -1,20 +1,20 @@
 ---
 title: 'Core Concepts'
-description: 'How Prometheus provides the trust, identity, and payment layers to enable an open "Web of Agents" and prevent unsafe, "walled garden" economies.'
+description: 'How Prometheus provides the Passport, Bank Account, and Marketplace to enable the open agentic web.'
 ---
 
-The Prometheus Protocol is built on three interconnected pillars that work together to create a self-sustaining, trustworthy economic engine for the decentralized AI economy. Understanding these concepts is key to understanding the power of the entire ecosystem.
+The Prometheus Protocol is built on three interconnected pillars that work together to create a self-sustaining, trustworthy economic engine for AI agents. Understanding these concepts is key to understanding the power of the entire ecosystem.
 
 <CardGroup cols={1}>
-  <Card title="1. Secure Identity">
+  <Card title="1. The Passport (Identity Layer)">
     A universal, standards-based authentication layer for both humans and AI
     agents.
   </Card>
-  <Card title="2. Verifiable Trust">
+  <Card title="2. The Marketplace (Verifiable Trust)">
     A decentralized app store and software supply chain to ensure service
     quality and security.
   </Card>
-  <Card title="3. Direct Payments">
+  <Card title="3. The Bank Account (Payments Layer)">
     A low-friction, programmable payment system designed for machine-to-machine
     commerce.
   </Card>
@@ -22,11 +22,13 @@ The Prometheus Protocol is built on three interconnected pillars that work toget
 
 ---
 
-## 1. Secure Identity & Authorization
+## 1. The Passport: Secure Identity & Authorization
 
 #### The Problem
 
 For any economy to function, participants need a reliable way to identify themselves and authorize actions. How does a service know which user—or which AI agent—is making a request? How can a user grant permissions to an agent without handing over their primary credentials?
+
+On the open web, an agent is **blind**—it can't prove who it is, and it can't trust who it's talking to.
 
 #### The Prometheus Solution
 
@@ -37,37 +39,60 @@ Prometheus provides a **unified identity model** built on the user's Principal I
 
 This dual approach ensures that both humans and machines can securely interact with services, while developers only need to integrate a single authentication context on their backend.
 
+This is the **universal key** that unlocks the open agentic web.
+
 ---
 
-## 2. Verifiable Trust & Discovery
+## 2. The Marketplace: Verifiable Trust & Discovery
 
 #### The Problem
 
 The core challenge of an open agent economy is preventing the "accidental emergence" of a chaotic, unsafe ecosystem. In a world of autonomous agents, how do you defend against fraud, malicious actors, and systemic risk without resorting to a centralized "walled garden"? How can you trust a third-party service when there's no central authority to vouch for it?
 
+When AI agents can **manage token allowances, control canister-held funds, and execute cross-chain transactions**, the stakes become existential. A single malicious line in deployed code could drain user funds. Traditional trust signals (brand reputation, app store reviews, star ratings) don't work for this new paradigm.
+
 #### The Prometheus Solution
 
-We built an **on-chain software supply chain and App Store**. This is a transparent system that manages the entire lifecycle of a service, from source code to live deployment, verified at every step.
+We built a **fully automated, decentralized verification network** powered by reproducible builds and economic incentives. This is the **trusted marketplace** where agents can find and use services audited by a DAO of staked community members.
+
+##### Automated Reproducible Builds
 
 - **Git-Based Publishing:** Developers submit a Git commit hash, creating an undeniable link to their source code.
-- **Automated Verification & Deployment:** The protocol automatically builds the code, verifies its hash, and—once audited—deploys it to a new canister. This guarantees that what was audited is what is running.
-- **Tiered Audits:** A bounty system incentivizes independent auditors to review the code. Passing these audits earns the service a **Prometheus Certificate** with a Gold, Silver, or Bronze tier, providing a clear, on-chain signal of its quality and security.
+- **Docker-Based Verification:** The protocol uses deterministic Docker environments to rebuild the code from source. Multiple independent verifier bots perform these builds automatically—no human intervention required.
+- **Cryptographic Proof:** Every build produces a WASM hash. If the hash from the automated rebuild matches the developer's submitted hash, the code is verified. This proves the deployed code matches the audited source.
+- **Multiple Independent Verifiers:** Each version requires consensus from 5 of 9 independent verifiers to be marked as verified—providing Byzantine fault tolerance against malicious actors.
+
+##### Economic Incentive Layer (ICRC-126 & ICRC-127)
+
+- **Bounty System:** Developers create bounties (~$2.25 per verification) to incentivize automated verification.
+- **Verifier Rewards:** Independent verifier bots earn tokens ($0.25 per verification) for successfully performing reproducible builds and filing cryptographic attestations.
+- **Staking & Slashing:** Verifiers must stake USDC collateral (0.30 USDC) to reserve bounties. If they abandon verification, their stake is burned—ensuring accountability.
+- **Permissionless Participation:** Anyone can run a verifier bot and earn rewards. The more verifiers, the stronger the security.
+
+##### Security Audits & Tiered Certificates
+
+- **Tiered Audits:** Beyond build verification, a bounty system incentivizes independent security auditors to review the code for vulnerabilities.
+- **Prometheus Certificate:** Passing these audits earns the service a certificate with Gold, Silver, or Bronze tier, providing a clear, on-chain signal of its quality and security.
+- **Two-Layer Trust:** Build verification proves integrity (deployed = source), while security audits prove safety (source = secure).
 
 ---
 
-## 3. Direct & Efficient Payments
+## 3. The Bank Account: Direct & Efficient Payments
 
 #### The Problem
+
+On the open web, an agent is **broke**—it has no way to pay for services on-chain.
 
 The agentic economy will be powered by **high-frequency micro-transactions**. This enables new economic models like the on-the-fly **"unbundling and rebundling"** of digital goods into hyper-personalized products. Traditional payment systems, with their high fees and slow settlement, are a complete barrier to this future.
 
 #### The Prometheus Solution
 
-Prometheus integrates a **direct token allowance system** that serves as a single payment pool for a user's identity.
+Prometheus provides **wallet creation and management for AI agents**, plus a complete suite of agent-operable DeFi primitives.
 
 - **Unified Allowance Pool:** A user grants a service a single, pre-approved spending allowance from their Principal.
 - **Flexible Access:** Both API Key-authenticated agents and JWT-authenticated user sessions draw from this same allowance pool, simplifying fund management.
 - **Low-Friction M2M Commerce:** This model is perfect for pay-as-you-go billing, enabling direct, programmable, and near-zero fee payments—the fuel for a truly autonomous economy.
+- **DeFi Primitives:** Core wallet functionality, decentralized exchanges, market intelligence, and earning/speculation tools—everything an agent needs to manage capital and generate returns.
 
 ## The Flywheel Effect
 

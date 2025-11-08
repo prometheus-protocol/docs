@@ -24,6 +24,18 @@ The protocol is composed of several key on-chain services working in concert to 
     bounty lifecycle, and the secure deployment pipeline that takes verified
     code and deploys it to the mainnet.
   </Card>
+  <Card title="The Verification Network" icon="magnifying-glass">
+    A decentralized network of automated verifier bots that perform reproducible
+    builds using Docker. These bots monitor the registry for pending
+    verifications, rebuild WASMs from source, and file cryptographic
+    attestations on-chain—earning token rewards for their work.
+  </Card>
+  <Card title="The Audit Hub" icon="clipboard-check">
+    An economic incentive layer built on ICRC-126 (attestations) and ICRC-127
+    (bounties). It manages bounty creation, verifier staking, consensus
+    tracking, and automated reward distribution for both build verification and
+    security audits.
+  </Card>
 </CardGroup>
 
 ---
@@ -37,12 +49,13 @@ A critical concept in the Prometheus architecture is the distinction between two
 
 #### 1. Protocol Participants (The "Supply Side")
 
-Developers and auditors interact directly with the protocol's core services to perform supply-chain functions. This on-chain, verifiable process is our answer to the need for an **"intentional design"** for the agent economy. It builds the foundation of trust necessary for an open ecosystem to thrive.
+Developers, verifiers, and auditors interact directly with the protocol's core services to perform supply-chain functions. This on-chain, verifiable process is our answer to the need for an **"intentional design"** for the agent economy. It builds the foundation of trust necessary for an open ecosystem to thrive.
 
-- **Actions:** Publishing code, claiming bounties, submitting audit results.
+- **Actions:** Publishing code, performing automated builds, claiming bounties, submitting audit results.
 - **Identity & Tools:** These actions are authorized using the blockchain's native identity system (principals). However, the tools used differ by role:
-  - **Developers** use the **Prometheus CLI** to perform command-line operations like publishing new service versions.
-  - **Auditors** use the **Prometheus web UI** (the Audit Hub) to find and claim bounties, review code, and submit their results.
+  - **Developers** use the **Prometheus CLI** to perform command-line operations like publishing new service versions with `app-store-cli release`.
+  - **Verifiers** run **automated bots** that continuously monitor for pending verifications, perform Docker-based reproducible builds, and file attestations—earning token rewards.
+  - **Auditors** use the **Prometheus web UI** (the Audit Hub) to find and claim bounties, review code, and submit their security audit results.
 
 This ensures that every critical action affecting the software supply chain is cryptographically signed and attributable to a specific on-chain identity, using the optimal tool for the job.
 

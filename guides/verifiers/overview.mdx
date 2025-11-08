@@ -1,0 +1,197 @@
+---
+title: 'Verifiers Overview'
+description: 'Learn how to earn token rewards by running automated verifier bots that perform reproducible builds.'
+---
+
+Verifiers are a critical part of the Prometheus Protocol's decentralized trust infrastructure. By running automated verifier bots, you help ensure that deployed code matches audited source code—while earning token rewards for your contribution.
+
+### What Verifiers Do
+
+Verifiers operate automated bots that:
+
+1. **Monitor for pending verifications** in the MCP Registry
+2. **Clone Git repositories** at specific commit hashes
+3. **Rebuild WASM files** in deterministic Docker environments
+4. **Compare cryptographic hashes** to verify reproducibility
+5. **File on-chain attestations** (ICRC-126) with build results
+6. **Claim bounty rewards** (ICRC-127) automatically
+
+The entire process is **fully automated**—no manual code review required. Your bot does all the work while you earn passive income.
+
+### Why Verifiers Matter
+
+In a world where AI agents manage real economic value (token allowances, canister-held funds, cross-chain transactions), **trust is everything**. Verifiers provide cryptographic proof that:
+
+- The code running in production matches the source code on GitHub
+- Multiple independent parties verified the same WASM hash
+- No malicious code was injected between development and deployment
+
+This creates a **Byzantine fault-tolerant** verification network where consensus from 5 of 9 independent verifiers is required for approval.
+
+<CardGroup cols={2}>
+  <Card title="Economic Security" icon="shield">
+    Verifiers stake USDC collateral (0.30 USDC per verification) which is
+    slashed if they abandon work—ensuring accountability without centralized
+    oversight.
+  </Card>
+  <Card title="Permissionless Participation" icon="unlock">
+    Anyone can run a verifier bot. Just stake USDC, configure Docker, and start
+    earning. No special permissions or approvals needed.
+  </Card>
+  <Card title="Automated Operations" icon="robot">
+    Bots handle everything: git clone, docker build, hash comparison,
+    attestation filing, and bounty claiming. Set it up once, earn continuously.
+  </Card>
+  <Card title="Market-Driven Rewards" icon="coins">
+    Developers set bounty amounts (~$0.25 per verification). Verifiers compete
+    to claim bounties quickly, creating a healthy competitive market.
+  </Card>
+</CardGroup>
+
+### The Economic Model
+
+**For Verifiers:**
+
+- **Earn per verification:** $0.25 USDC per successful build verification
+- **Low operational costs:** ~$0.01-0.05 in compute (VPS, electricity, bandwidth)
+- **Healthy margins:** 5-25x markup on actual costs
+- **Volume-based profitability:** Process many verifications automatically for steady income
+- **Stake once, use everywhere:** Centralized stake pool in your dashboard covers all verifications
+
+**Example Earnings:**
+
+- **Casual verifier** (20-50 verifications/day): $5-12.50/day = $150-375/month
+- **Active verifier** (100-200/day): $25-50/day = $750-1,500/month
+- **Professional operation** (multiple bots, 500+/day): $125+/day = $3,750+/month
+
+**Operational Requirements:**
+
+- VPS or cloud instance: $5-10/month (2 CPU, 4GB RAM)
+- Initial stake pool: 10-20 USDC recommended (handles 30-60 concurrent verifications)
+- Docker for isolated builds
+- Verifier dashboard account at prometheusprotocol.org/verifiers
+
+### How It Works
+
+#### 1. Developer Publishes
+
+A developer publishes a new MCP server version using `app-store-cli release`:
+
+- Submits Git commit hash and WASM hash to the MCP Registry
+- Creates 9 verification bounties (~$0.25 each = $2.25 total)
+- WASM becomes visible in `list_pending_verifications()` endpoint
+
+#### 2. Your Bot Detects Work
+
+Your verifier bot continuously polls for pending verifications:
+
+```typescript
+const pending = await listPendingVerifications();
+// Returns WASMs that need verification
+```
+
+#### 3. Reserve & Stake
+
+Your bot reserves a bounty by staking USDC collateral:
+
+```typescript
+await reserveBounty(identity, {
+  bounty_id: buildBounty.id,
+  stake_amount: 300_000n, // 0.30 USDC
+});
+// Stake is locked for 1 hour (builds complete in <10 seconds)
+```
+
+#### 4. Automated Build
+
+Your bot performs a deterministic Docker build:
+
+```typescript
+const result = await verifyBuild(repo, commit_hash, wasm_hash);
+// Clones repo, checks out commit, builds in Docker, compares hash
+```
+
+#### 5. File Attestation
+
+If the build succeeds, your bot files an on-chain attestation:
+
+```typescript
+await fileAttestation(identity, {
+  bounty_id: buildBounty.id,
+  wasm_id: job.wasm_hash,
+  attestationData: {
+    '126:audit_type': 'build_reproducibility_v1',
+    build_duration_seconds: result.duration,
+    git_commit: job.commit_hash,
+    repo_url: job.repo,
+  },
+});
+```
+
+#### 6. Claim Reward
+
+Your bot claims the bounty, receiving stake + reward:
+
+```typescript
+await claimBounty(identity, { bounty_id, wasm_id });
+// Stake returned + 0.25 USDC reward transferred to your account
+```
+
+**Total time:** Typically 10-60 seconds from detection to reward.
+
+### Security & Accountability
+
+**Staking Mechanism:**
+
+- **Reserve bounty:** Stake 0.30 USDC collateral (held by Audit Hub)
+- **1-hour lock period:** Stake is locked while verification is in progress
+- **Automated builds complete in under 10 seconds:** Plenty of time buffer
+- **Slashing for abandonment:** If you don't submit results within 1 hour, your USDC stake is burned
+- **Return on success:** Stake returned + 0.25 USDC reward
+
+**Consensus Ensures Quality:**
+
+- 9 independent verifications required per WASM
+- 5 of 9 majority needed for finalization
+- Byzantine fault tolerance: Even if minority of verifiers are malicious/incorrect, majority consensus ensures integrity
+- Each verifier operates independently—no coordination needed
+
+**Divergence Reports Also Pay:**
+Even if a build fails verification, you can file a divergence report and still claim the bounty. This incentivizes honest reporting over success-driven verification.
+
+### Dashboard Management
+
+All verifier operations are managed through the **Verifier Dashboard** at `prometheusprotocol.org/verifiers`:
+
+**Features:**
+
+- **Centralized stake pool:** Deposit USDC once, use it across all verifications
+- **Real-time monitoring:** View active stakes, earnings, and performance metrics
+- **Instant withdrawals:** Withdraw earnings anytime
+- **API credentials:** Generate secure API keys for your bots
+- **Multi-bot support:** Run bots on multiple servers, all pulling from one stake pool
+- **No wallet management in bots:** Bots use API credentials, funds stay secure in dashboard
+
+**Security:**
+
+- Dashboard is a **canister on ICP** (not a traditional web server)
+- **WebAuthn authentication** (same security as Internet Identity)
+- **Canister-controlled security:** Transparent, auditable code
+- API keys are scoped and revocable
+- Multi-signature withdrawals for large amounts (>$1000)
+
+### Getting Started
+
+Ready to start earning? Check out our [Getting Started Guide](/guides/verifiers/getting-started) for step-by-step instructions on:
+
+1. Setting up your Verifier Dashboard account
+2. Depositing initial stake
+3. Configuring and running your verifier bot
+4. Monitoring earnings and performance
+5. Scaling to multiple bots
+
+You can also review the [Reproducible Builds Reference](/reference/reproducible-builds) for technical details on the Docker build process.
+
+---
+
+**Join the verification network and help secure the open agent economy while earning passive income.**

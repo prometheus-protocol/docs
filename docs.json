@@ -78,6 +78,14 @@
             ]
           },
           {
+            "group": "For Verifiers",
+            "icon": "magnifying-glass",
+            "pages": [
+              "guides/verifiers/overview",
+              "guides/verifiers/getting-started"
+            ]
+          },
+          {
             "group": "For Auditors",
             "icon": "shield-check",
             "pages": [
@@ -95,6 +103,7 @@
           "reference/cli-commands",
           "reference/sdk-libraries",
           "reference/icrc-standards",
+          "reference/reproducible-builds",
           "reference/canister-ids",
           "reference/mcp-resources"
         ]

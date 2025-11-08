@@ -1,0 +1,500 @@
+---
+title: 'Reproducible Builds'
+description: 'Technical reference for the deterministic Docker-based build system used for WASM verification.'
+---
+
+Prometheus Protocol uses a **deterministic Docker-based build system** to ensure that any developer or verifier can rebuild a WASM file from source and get byte-for-byte identical output. This technical reference explains how the system works.
+
+## Overview
+
+Reproducible builds are the foundation of the verification network. They enable:
+
+- **Build integrity verification:** Proof that deployed code matches source code
+- **Independent verification:** Multiple verifiers can confirm the same result
+- **Byzantine fault tolerance:** Majority consensus prevents malicious approvals
+- **Cryptographic auditability:** Permanent on-chain record of verification attestations
+
+## Architecture
+
+### Build Environment Components
+
+The reproducible build system consists of several layers:
+
+<CardGroup cols={2}>
+  <Card title="Base Docker Image" icon="box">
+    Pre-built image with pinned versions of the Motoko compiler (`moc`), WASM
+    optimizer (`ic-wasm`), and package manager (`mops-cli`).
+  </Card>
+  <Card title="Build Script" icon="file-code">
+    A standardized `build.sh` script that compiles Motoko source code to
+    optimized WASM using locked dependency versions.
+  </Card>
+  <Card title="Docker Compose" icon="layer-group">
+    Orchestrates the build process with proper dependency ordering and isolated
+    environments for each verification.
+  </Card>
+  <Card title="Verifier Bot" icon="robot">
+    Automated service that clones repositories, triggers Docker builds, computes
+    hashes, and files on-chain attestations.
+  </Card>
+</CardGroup>
+
+## Dockerfile Structure
+
+### Base Image (Dockerfile.base)
+
+The base image is built using Alpine Linux for minimal, reproducible builds:
+
+```dockerfile
+FROM alpine:latest AS build
+
+# Install build tools
+RUN apk add --no-cache curl ca-certificates tar bash
+
+# Create installation directory
+RUN mkdir -p /install/bin
+
+# Download and install moc (Motoko compiler)
+ARG MOC_VERSION=0.16.0
+RUN curl -L https://github.com/dfinity/motoko/releases/download/${MOC_VERSION}/motoko-Linux-x86_64-${MOC_VERSION}.tar.gz -o motoko.tgz \
+    && tar xzf motoko.tgz \
+    && install moc /install/bin
+
+# Download and install ic-wasm (WASM optimizer)
+ARG IC_WASM_VERSION=0.9.3
+RUN curl -L https://github.com/research-ag/ic-wasm/releases/download/${IC_WASM_VERSION}/ic-wasm-x86_64-unknown-linux-musl.tar.gz -o ic-wasm.tgz \
+    && tar xzf ic-wasm.tgz \
+    && install ic-wasm /install/bin
+
+# Download and install mops-cli (package manager)
+ARG MOPS_CLI_VERSION=0.2.1
+RUN curl -L https://github.com/prometheus-protocol/mops-cli/releases/download/v${MOPS_CLI_VERSION}/mops-cli-linux64 -o mops-cli \
+    && install mops-cli /install/bin
+
+# Final runtime image
+FROM alpine:latest
+RUN apk add bash
+COPY --from=build /install/bin/* /usr/local/bin/
+
+WORKDIR /project
+```
+
+**Key Features:**
+
+- **Pinned versions:** Every tool version is explicitly specified via `ARG`
+- **Deterministic downloads:** Uses official releases with version tags
+- **Multi-stage build:** Separates build-time dependencies from runtime
+- **Minimal runtime:** Only essential tools in the final image
+
+### Project Image (Dockerfile)
+
+Each project builds on the base image:
+
+```dockerfile
+ARG MOC_VERSION
+FROM motoko-build-base:moc-${MOC_VERSION}
+
+WORKDIR /project
+
+# Copy dependency manifest first (for layer caching)
+COPY mops.toml ./
+RUN mops-cli install --locked
+
+# Copy source code
+COPY src /project/src/
+COPY did /project/did/
+COPY build.sh /project/
+
+# Build the canister
+CMD ["bash", "build.sh"]
+```
+
+**Build Process:**
+
+1. Start from versioned base image
+2. Install locked dependencies from `mops.toml`
+3. Copy source files
+4. Execute build script
+
+## Build Script (build.sh)
+
+The build script is a standardized bash script that compiles Motoko to optimized WASM:
+
+```bash
+#!/bin/bash
+set -e
+
+# Configuration
+CANISTER_NAME="my_canister"
+MAIN_FILE="src/main.mo"
+OUTPUT_DIR="out"
+OUTPUT_FILE="${OUTPUT_DIR}/out_Linux_x86_64.wasm"
+
+# Create output directory
+mkdir -p "$OUTPUT_DIR"
+
+# Compile Motoko to WASM
+moc \
+  --package base $(mops-cli sources) \
+  -o "${OUTPUT_DIR}/${CANISTER_NAME}.wasm" \
+  "${MAIN_FILE}"
+
+# Optimize WASM
+ic-wasm \
+  "${OUTPUT_DIR}/${CANISTER_NAME}.wasm" \
+  -o "${OUTPUT_FILE}" \
+  shrink
+
+echo "Build complete: ${OUTPUT_FILE}"
+sha256sum "${OUTPUT_FILE}"
+```
+
+**Optimization Steps:**
+
+- `moc`: Compile Motoko to unoptimized WASM
+- `ic-wasm shrink`: Remove debug symbols and optimize for size
+- `sha256sum`: Compute hash for verification
+
+## Docker Compose Configuration
+
+The `docker-compose.yml` orchestrates the build:
+
+```yaml
+version: '3.8'
+
+services:
+  base:
+    build:
+      context: .
+      dockerfile: Dockerfile.base
+      args:
+        MOC_VERSION: ${MOC_VERSION:-0.16.0}
+        IC_WASM_VERSION: ${IC_WASM_VERSION:-0.9.3}
+        MOPS_CLI_VERSION: ${MOPS_CLI_VERSION:-0.2.1}
+    image: motoko-build-base:moc-${MOC_VERSION:-0.16.0}
+
+  wasm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MOC_VERSION: ${MOC_VERSION:-0.16.0}
+    depends_on:
+      - base
+    volumes:
+      - ./out:/project/out
+```
+
+**Key Features:**
+
+- **depends_on:** Ensures base image builds before project image
+- **volumes:** Mounts output directory for extracting built WASM
+- **environment variables:** Tool versions configured via `.env`
+
+## Verification Workflow
+
+### 1. Developer Builds Locally
+
+Developer publishes with `app-store-cli release`:
+
+```bash
+# From project directory
+app-store-cli release 1.0.0
+
+# This command:
+# 1. Updates version in source
+# 2. Commits and pushes to GitHub
+# 3. Builds WASM locally using Docker
+# 4. Computes SHA-256 hash
+# 5. Submits to registry with git commit hash
+```
+
+### 2. Verifier Bot Detects Pending Verification
+
+Verifier bot polls the registry:
+
+```typescript
+const pending = await listPendingVerifications();
+// Returns: [
+//   {
+//     wasm_hash: "0x1234abcd...",
+//     repo: "https://github.com/user/project.git",
+//     commit_hash: "abc123...",
+//     version: "1.0.0"
+//   }
+// ]
+```
+
+### 3. Bot Performs Reproducible Build
+
+The verifier bot automates the entire build process:
+
+```typescript
+export async function verifyBuild(
+  repo: string,
+  commitHash: string,
+  expectedWasmHash: string,
+): Promise<BuildResult> {
+  const workDir = `/tmp/verify-${Date.now()}`;
+
+  // 1. Clone repository
+  execSync(`git clone --depth 1 ${repo} ${workDir}`);
+  execSync(`git -C ${workDir} checkout ${commitHash}`);
+
+  // 2. Auto-detect configuration
+  const canisterName = extractCanisterNameFromDfx(workDir);
+  const mocVersion = getMocVersionFromMopsToml(workDir);
+
+  // 3. Bootstrap build files
+  bootstrapBuildFiles({
+    projectPath: workDir,
+    mocVersion: mocVersion,
+  });
+
+  // 4. Build in Docker (no cache = clean build)
+  execSync(`docker-compose build --no-cache`, { cwd: workDir });
+  execSync(`docker-compose run wasm`, { cwd: workDir });
+
+  // 5. Compute hash
+  const wasmBytes = fs.readFileSync(
+    path.join(workDir, 'out', 'out_Linux_x86_64.wasm'),
+  );
+  const actualHash = crypto
+    .createHash('sha256')
+    .update(wasmBytes)
+    .digest('hex');
+
+  // 6. Compare
+  return {
+    success: actualHash === expectedWasmHash,
+    wasmHash: actualHash,
+    buildLog: buildLog.slice(-1000),
+    duration: duration,
+  };
+}
+```
+
+### 4. Bot Files Attestation
+
+If hashes match, the bot files an on-chain attestation:
+
+```typescript
+await fileAttestation(identity, {
+  bounty_id: buildBounty.id,
+  wasm_id: job.wasm_hash,
+  attestationData: {
+    '126:audit_type': 'build_reproducibility_v1',
+    build_duration_seconds: result.duration,
+    git_commit: job.commit_hash,
+    repo_url: job.repo,
+    build_log_excerpt: result.buildLog.slice(0, 500),
+  },
+});
+```
+
+## Ensuring Determinism
+
+### Pinned Tool Versions
+
+All toolchain versions are pinned in `docker-compose.yml`:
+
+```yaml
+args:
+  MOC_VERSION: 0.16.0
+  IC_WASM_VERSION: 0.9.3
+  MOPS_CLI_VERSION: 0.2.1
+```
+
+### Locked Dependencies
+
+Dependencies are locked in `mops.toml`:
+
+```toml
+[dependencies]
+base = "0.11.1"
+icrc1-types = "0.1.0"
+
+[dev-dependencies]
+test = "1.0.0"
+```
+
+The `mops-cli install --locked` command ensures exact versions are used.
+
+### Isolated Environment
+
+Each build runs in a fresh Docker container with:
+
+- **No network access** during compilation
+- **No host system dependencies**
+- **Clean filesystem** (`--no-cache` flag)
+- **Consistent timezone and locale**
+
+### Cross-Platform Consistency
+
+Since Motoko compiler version 0.13.4, builds are reproducible across:
+
+- Linux (x86_64)
+- macOS (M1/M2 ARM and Intel)
+- Windows (via WSL2)
+
+All platforms produce **byte-for-byte identical WASM** when using the same tool versions.
+
+## Security Considerations
+
+### Supply Chain Security
+
+**Risk:** What if a toolchain binary is compromised?
+
+**Mitigation:**
+
+- Tool binaries are fetched by **version number AND hash verification**
+- Base images use SHA-256 pinning: `alpine:latest@sha256:...`
+- Build template repo uses GitHub Dependabot and security scanning
+- Multiple independent verifiers pulling from different CDN endpoints
+- Community monitoring of unexpected hash changes
+
+### Build Environment Tampering
+
+**Risk:** What if a verifier modifies the Docker build process?
+
+**Mitigation:**
+
+- Majority consensus (5 of 9) prevents single verifier attacks
+- Each verifier operates independently (no coordination)
+- Divergent results trigger manual security audit
+- Economic staking disincentivizes dishonest behavior
+
+### Time-of-Check to Time-of-Use (TOCTOU)
+
+**Risk:** What if code changes after verification?
+
+**Mitigation:**
+
+- Verifications are tied to specific Git commit hashes
+- WASM hash is cryptographically bound to attestation
+- Deployments only accept verified WASM hashes
+- On-chain audit trail prevents tampering
+
+## Performance Optimization
+
+### Build Caching
+
+For repeated builds of the same project:
+
+```bash
+# First build (cold cache)
+docker-compose build  # ~2-3 minutes
+
+# Subsequent builds (warm cache)
+docker-compose build  # ~10-30 seconds
+```
+
+Layer caching speeds up dependency installation.
+
+### Parallel Verification
+
+Verifier bots can process multiple verifications simultaneously:
+
+```typescript
+// Process up to 5 concurrent verifications
+const pendingJobs = await listPendingVerifications();
+const jobs = pendingJobs.slice(0, 5);
+
+await Promise.all(
+  jobs.map((job) => verifyBuild(job.repo, job.commit_hash, job.wasm_hash)),
+);
+```
+
+### Resource Management
+
+Recommended verifier server specs:
+
+- **CPU:** 2+ cores (for parallel builds)
+- **RAM:** 4GB minimum, 8GB recommended
+- **Disk:** 20GB+ SSD (for Docker images and build artifacts)
+- **Network:** 100+ Mbps (for fast git clones)
+
+## Troubleshooting
+
+### Hash Mismatch
+
+**Symptoms:** Verifier's hash doesn't match developer's hash
+
+**Common Causes:**
+
+1. **Different tool versions:** Check `MOC_VERSION` in both environments
+2. **Modified source code:** Ensure exact commit hash is used
+3. **Unlocked dependencies:** Use `mops-cli install --locked`
+4. **Platform differences:** Ensure both use Linux x86_64 or macOS M1+
+
+**Debugging:**
+
+```bash
+# Compare tool versions
+moc --version
+ic-wasm --version
+mops-cli --version
+
+# Verify git commit
+git rev-parse HEAD
+
+# Check dependency lock
+cat mops.toml
+```
+
+### Build Timeout
+
+**Symptoms:** Docker build exceeds 1-hour stake lock period
+
+**Solutions:**
+
+- Increase server resources (CPU/RAM)
+- Use SSD storage for faster I/O
+- Pre-pull base images: `docker pull motoko-build-base:moc-0.16.0`
+
+### Dependency Installation Fails
+
+**Symptoms:** `mops-cli install --locked` fails
+
+**Common Causes:**
+
+1. **Network issues:** Check internet connectivity
+2. **Rate limiting:** Use GITHUB_TOKEN for private package access
+3. **Invalid mops.toml:** Validate syntax
+
+**Fix:**
+
+```bash
+# Set GitHub token
+export GITHUB_TOKEN=ghp_your_token_here
+
+# Retry installation
+mops-cli install --locked
+```
+
+## Reference
+
+### Official Build Template
+
+The canonical reproducible build template is maintained at:
+
+- **GitHub:** [research-ag/motoko-build-template](https://github.com/research-ag/motoko-build-template)
+- **Container Registry:** `ghcr.io/prometheus-protocol/motoko-build-template`
+
+### Tool Documentation
+
+- **Motoko:** [internetcomputer.org/docs/motoko](https://internetcomputer.org/docs/current/motoko/main/getting-started/motoko-introduction)
+- **ic-wasm:** [github.com/research-ag/ic-wasm](https://github.com/research-ag/ic-wasm)
+- **mops-cli:** [github.com/prometheus-protocol/mops-cli](https://github.com/prometheus-protocol/mops-cli)
+- **Docker:** [docs.docker.com](https://docs.docker.com)
+
+### ICRC Standards
+
+- **ICRC-118:** [WASM Registry](https://forum.dfinity.org/t/icrc-118-wasm-registry-definition-for-version-control-and-history/42589)
+- **ICRC-120:** [Canister Orchestration](https://forum.dfinity.org/t/icrc-120-canister-wasm-orchestration-service/42591)
+- **ICRC-126:** [Verification & Auditing](https://forum.dfinity.org/t/icrc-126-wasm-verification/42592)
+- **ICRC-127:** [Bounty System](https://forum.dfinity.org/t/icrc-127-generic-bounty-system/42594)
+
+---
+
+For questions or issues with reproducible builds, join our [Discord community](https://discord.gg/TbqgYERjYw) or open an issue on [GitHub](https://github.com/prometheus-protocol/prometheus-protocol).

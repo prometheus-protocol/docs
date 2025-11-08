@@ -33,16 +33,31 @@ These standards form the backbone of the decentralized App Store and the softwar
     href="https://forum.dfinity.org/t/icrc-126-wasm-verification/42592"
     icon="clipboard-check">
     **The Immutable Logbook.** This standard provides the immutable ledger for
-    verification requests and the resulting audit reports ("attestations") filed
-    by security experts.
+    verification requests and attestations. Verifiers file cryptographic
+    attestations after performing reproducible builds, creating a permanent
+    on-chain audit trail. **Key Features:** - **Attestation filing:** Verifiers
+    submit build verification results with metadata - **Audit type system:**
+    Supports multiple verification types (build_reproducibility_v1,
+    security_audit, etc.) - **Consensus tracking:** Records multiple independent
+    verifications per WASM - **Authorization:** Integrates with ICRC-127 bounty
+    system to authorize attestations - **Immutable history:** All attestations
+    stored permanently on-chain via ICRC-3
   </Card>
   <Card
     title="ICRC-127: Bounty System"
     href="https://forum.dfinity.org/t/icrc-127-generic-bounty-system/42594"
     icon="gift">
     **The Economic Engine.** This standard powers the decentralized bounty
-    system. It allows anyone to fund audits and enables automated, trustless
-    payouts from escrow upon successful completion.
+    system that incentivizes both automated build verification and human
+    security audits. **Key Features:** - **Bounty creation:** Developers fund
+    verification work with USDC rewards - **Staking mechanism:** Verifiers stake
+    collateral (0.30 USDC) to reserve bounties - **Slashing protection:** Stakes
+    are burned if verifiers abandon work (1-hour timeout) - **Automated
+    payouts:** Smart contracts transfer rewards upon successful verification -
+    **Multiple verifiers:** Each bounty can be claimed by one verifier, enabling
+    parallel verification - **Divergence reporting:** Verifiers earn rewards
+    even for failed builds (honest reporting) - **Consensus-based
+    finalization:** Majority of verifiers must agree for WASM approval
   </Card>
 </CardGroup>
 
@@ -70,3 +85,18 @@ These standards provide the foundation for payments, credentials, and on-chain p
 </CardGroup>
 
 By composing these standards, the Prometheus Protocol creates a transparent, end-to-end system for verifiable software, from code submission to secure deployment.
+
+### How They Work Together
+
+The standards form an integrated workflow:
+
+1. **ICRC-118 (WASM Registry):** Developer registers a new WASM version with Git commit hash and expected hash
+2. **ICRC-127 (Bounty System):** Developer creates verification bounties (~$2.25 per version) to incentivize verifiers
+3. **Verifier Network:** Automated bots detect pending verifications and reserve bounties by staking USDC
+4. **Reproducible Builds:** Verifiers rebuild WASM from source in deterministic Docker environments
+5. **ICRC-126 (Attestations):** Verifiers file cryptographic attestations with build results and metadata
+6. **Consensus:** System requires 5 of 9 independent verifiers to agree on the same WASM hash
+7. **ICRC-127 (Rewards):** Successful verifiers claim bounties and receive USDC + returned stake
+8. **ICRC-120 (Deployment):** Once verified, the WASM can be deployed to mainnet via canister orchestration
+
+This creates a **trustless, automated verification ecosystem** with economic incentives ensuring integrity at every step.
