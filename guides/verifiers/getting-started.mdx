@@ -93,7 +93,7 @@ docker pull ghcr.io/prometheus-protocol/verifier-bot:latest
 # Run directly with environment variables
 docker run -d \
   --name verifier-bot \
-  -e API_KEY=your_api_key_here \
+  -e VERIFIER_API_KEY=your_api_key_here \
   -e NETWORK=ic \
   ghcr.io/prometheus-protocol/verifier-bot:latest
 ```
@@ -114,7 +114,7 @@ Edit the `.env` file and set:
 
 ```bash
 # Your API key from the dashboard
-API_KEY=your_api_key_here
+VERIFIER_API_KEY=your_api_key_here
 
 # Network configuration (local for testing, ic for production)
 NETWORK=ic
